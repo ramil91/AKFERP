@@ -1,0 +1,22 @@
+## .NET
+bin/
+obj/
+out/
+*.user
+*.suo
+*.cache
+*.log
+Logs/
+.vs/
+
+## NuGet
+*.nupkg
+**/packages/
+
+## Rider / VS Code
+.idea/
+.vscode/
+
+## OS
+Thumbs.db
+.DS_Store

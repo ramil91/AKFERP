@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AKFERP.API", "AKFERP.API\AKFERP.API.csproj", "{2C81E49B-007C-435B-911A-B582B056988E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AKFERP.Application", "AKFERP.Application\AKFERP.Application.csproj", "{4275E99F-6031-4F39-A5AD-B6C97C49B579}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AKFERP.Domain", "AKFERP.Domain\AKFERP.Domain.csproj", "{5FFC564F-771F-4AF0-B361-DD4C0368F9F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AKFERP.Infrastructure", "AKFERP.Infrastructure\AKFERP.Infrastructure.csproj", "{406397A7-5FE3-4981-98CB-F3CF14276627}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AKFERP.Persistence", "AKFERP.Persistence\AKFERP.Persistence.csproj", "{5451CDC1-1230-4411-873C-ED175A140B34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AKFERP.Shared", "AKFERP.Shared\AKFERP.Shared.csproj", "{200BE3CA-7DC4-4335-ABD5-3B884E52FC12}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C81E49B-007C-435B-911A-B582B056988E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C81E49B-007C-435B-911A-B582B056988E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C81E49B-007C-435B-911A-B582B056988E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C81E49B-007C-435B-911A-B582B056988E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4275E99F-6031-4F39-A5AD-B6C97C49B579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4275E99F-6031-4F39-A5AD-B6C97C49B579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4275E99F-6031-4F39-A5AD-B6C97C49B579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4275E99F-6031-4F39-A5AD-B6C97C49B579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FFC564F-771F-4AF0-B361-DD4C0368F9F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FFC564F-771F-4AF0-B361-DD4C0368F9F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FFC564F-771F-4AF0-B361-DD4C0368F9F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FFC564F-771F-4AF0-B361-DD4C0368F9F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{406397A7-5FE3-4981-98CB-F3CF14276627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{406397A7-5FE3-4981-98CB-F3CF14276627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{406397A7-5FE3-4981-98CB-F3CF14276627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{406397A7-5FE3-4981-98CB-F3CF14276627}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5451CDC1-1230-4411-873C-ED175A140B34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5451CDC1-1230-4411-873C-ED175A140B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5451CDC1-1230-4411-873C-ED175A140B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5451CDC1-1230-4411-873C-ED175A140B34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{200BE3CA-7DC4-4335-ABD5-3B884E52FC12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{200BE3CA-7DC4-4335-ABD5-3B884E52FC12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{200BE3CA-7DC4-4335-ABD5-3B884E52FC12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{200BE3CA-7DC4-4335-ABD5-3B884E52FC12}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
