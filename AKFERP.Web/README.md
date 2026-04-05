@@ -28,7 +28,7 @@ Copy `.env.example` to `.env`.
 
 | Path | Role |
 |------|------|
-| `src/components` | Reusable UI (e.g. `auth/PrivateRoute`, `layout/MainLayout`) |
+| `src/components` | Reusable UI (e.g. `auth/PrivateRoute`, `layout/AppLayout`) |
 | `src/pages` | Route-level screens |
 | `src/services` | API (`apiClient`, `authService`), `notificationService` |
 | `src/hooks` | Thin re-exports / custom hooks |

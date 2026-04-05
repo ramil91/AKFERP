@@ -1,0 +1,83 @@
+---
+description: AKFERP.Web admin UI — CoreUI React template conventions and ALKHIDMAT brand
+globs: AKFERP.Web/**/*.tsx,AKFERP.Web/**/*.css
+alwaysApply: false
+---
+
+# AKFERP.Web — CoreUI admin panel
+
+## Theme reference
+
+**CoreUI Free React Admin Template (MIT)**
+- GitHub: https://github.com/coreui/coreui-free-react-admin-template
+- Live demo: https://coreui.io/demos/react/free/
+- Docs: https://coreui.io/react/docs/
+- Components: https://coreui.io/react/docs/components/accordion/
+- Icons: https://coreui.io/icons/
+- Charts: https://coreui.io/react/docs/components/chart/
+
+When you need a new component pattern (e.g. modal, toast, tabs, accordion, carousel, progress), look it up in the CoreUI docs above and use the `@coreui/react` component — do NOT build custom CSS equivalents.
+
+## Stack
+
+- `@coreui/react`, `@coreui/coreui`, `@coreui/icons`, `@coreui/icons-react`, `@coreui/react-chartjs`, `chart.js`.
+- React 18 + React Router 6 + Vite + TypeScript.
+- CSS: CoreUI bundled CSS (`@coreui/coreui/dist/css/coreui.min.css`) imported in `src/index.css`. Brand overrides via `--cui-primary`.
+
+## Brand
+
+- ALKHIDMAT primary: `#0059A3` (`--cui-primary`).
+- Logo: `/alkhidmat-logo.png` in `AppSidebar` header and auth pages.
+- Font: **Roboto** via Google Fonts in `index.html`.
+
+## Layout
+
+- **`DefaultLayout`**: `AppSidebar` + `AppHeader` + `<Outlet />` + `AppFooter`.
+- **Auth/error pages** (`/login`, `/signup`, `/404`): full-screen, **outside** `DefaultLayout`.
+- Sidebar nav: `src/_nav.tsx` (array of `CNavItem` / `CNavGroup` / `CNavTitle`).
+- Breadcrumbs: `AppBreadcrumb.tsx` → `routeNames` map + `EDIT_PATTERNS` for dynamic `:id` routes.
+
+## CRUD page patterns (reference: Employee module)
+
+### List page (`EmployeeListPage`)
+- `CCard` > `CCardHeader` (title + Add button) > `CCardBody`.
+- Filters toolbar: `CInputGroup` search + `CFormSelect` department/status + page size.
+- `CTable` with `CTableHead color="light"`, `CBadge` for status, `CDropdown` for row actions (Edit/Delete).
+- `CPagination` with numbered pages.
+- `CModal` for delete confirmation.
+
+### Add / Edit form (`EmployeeForm`)
+- Shared component, receives `existing?: Employee` prop.
+- `CNav variant="tabs"` for multi-section forms (Personal, Job, Address).
+- `CTabContent` + `CTabPane` for tab panels.
+- `CFormInput`, `CFormSelect`, `CFormTextarea`, `CFormCheck`, `CInputGroup` with icon prefixes.
+- `CFormFeedback invalid` for validation messages.
+- `CAlert color="success" dismissible` for save confirmation.
+- `CCardFooter` for contextual help text.
+
+### Data store
+- In-memory store at `src/data/employees.ts` — swap for API calls later.
+- `employeeStore.getAll()`, `.getById()`, `.add()`, `.update()`, `.remove()`.
+
+## Routes
+
+| Path | Page | Description |
+|------|------|-------------|
+| `/` | HomePage | Welcome + feature cards |
+| `/login` | LoginPage | Full-screen auth |
+| `/signup` | SignupPage | Full-screen registration |
+| `/404` | NotFoundPage | Error page |
+| `/admin/dashboard` | AdminDashboardPage | Stat widgets + charts + table |
+| `/admin/records` | AdminTablePage | Generic paginated table |
+| `/admin/records/new` | AdminAddFormPage | Generic add form |
+| `/admin/employees` | EmployeeListPage | Full CRUD list |
+| `/admin/employees/new` | AddEmployeePage | Add employee (tabbed form) |
+| `/admin/employees/:id/edit` | EditEmployeePage | Edit employee (tabbed form) |
+
+## When adding a new CRUD module
+
+1. Create types + data store in `src/data/`.
+2. Create `ListPage`, `Form`, `AddPage`, `EditPage` in `src/pages/admin/<module>/`.
+3. Add routes in `AppRoutes.tsx` under `/admin`.
+4. Add nav entries in `src/_nav.tsx`.
+5. Add breadcrumb names in `AppBreadcrumb.tsx` `routeNames` + `EDIT_PATTERNS`.

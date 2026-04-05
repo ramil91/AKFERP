@@ -15,6 +15,9 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    /** Avoid accidentally leaving an old dev server on 5173 while editing — you’d keep seeing stale UI. */
+    strictPort: true,
+    // If HMR never picks up saves (OneDrive / network drives), try: watch: { usePolling: true, interval: 1000 }
     // Proxy API in dev to avoid CORS when hitting local AKFERP.API
     proxy: {
       '/api': {

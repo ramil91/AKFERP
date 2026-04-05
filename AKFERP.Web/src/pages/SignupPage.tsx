@@ -1,6 +1,20 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCol,
+  CContainer,
+  CForm,
+  CFormInput,
+  CInputGroup,
+  CInputGroupText,
+  CRow,
+} from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { cilLockLocked, cilUser } from '@coreui/icons';
 
 export function SignupPage() {
   const { register, isAuthenticated } = useAuth();
@@ -12,7 +26,7 @@ export function SignupPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) navigate('/dashboard', { replace: true });
+    if (isAuthenticated) navigate('/admin/dashboard', { replace: true });
   }, [isAuthenticated, navigate]);
 
   async function onSubmit(e: FormEvent) {
@@ -25,7 +39,7 @@ export function SignupPage() {
         firstName: firstName || undefined,
         lastName: lastName || undefined,
       });
-      navigate('/dashboard', { replace: true });
+      navigate('/admin/dashboard', { replace: true });
     } catch {
       /* toast */
     } finally {
@@ -34,45 +48,71 @@ export function SignupPage() {
   }
 
   return (
-    <div className="page page--narrow">
-      <h1>Sign up</h1>
-      <form className="form" onSubmit={onSubmit}>
-        <label className="form__field">
-          <span>Email</span>
-          <input
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(ev) => setEmail(ev.target.value)}
-            required
-          />
-        </label>
-        <label className="form__field">
-          <span>Password</span>
-          <input
-            type="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(ev) => setPassword(ev.target.value)}
-            required
-            minLength={6}
-          />
-        </label>
-        <label className="form__field">
-          <span>First name</span>
-          <input value={firstName} onChange={(ev) => setFirstName(ev.target.value)} />
-        </label>
-        <label className="form__field">
-          <span>Last name</span>
-          <input value={lastName} onChange={(ev) => setLastName(ev.target.value)} />
-        </label>
-        <button type="submit" className="btn btn--primary" disabled={submitting}>
-          {submitting ? 'Creating account…' : 'Create account'}
-        </button>
-      </form>
-      <p className="muted">
-        Already have an account? <Link to="/login">Log in</Link>
-      </p>
+    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
+      <CContainer>
+        <CRow className="justify-content-center">
+          <CCol md={9} lg={7} xl={6}>
+            <CCard className="mx-4">
+              <CCardBody className="p-4">
+                <CForm onSubmit={onSubmit}>
+                  <div className="text-center mb-4">
+                    <img src="/alkhidmat-logo.png" alt="ALKHIDMAT" height={56} style={{ objectFit: 'contain' }} />
+                  </div>
+                  <h1 className="h3">Register</h1>
+                  <p className="text-body-secondary">Create your account</p>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText><CIcon icon={cilUser} /></CInputGroupText>
+                    <CFormInput
+                      placeholder="First name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                  </CInputGroup>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText><CIcon icon={cilUser} /></CInputGroupText>
+                    <CFormInput
+                      placeholder="Last name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </CInputGroup>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>@</CInputGroupText>
+                    <CFormInput
+                      type="email"
+                      placeholder="Email"
+                      autoComplete="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </CInputGroup>
+                  <CInputGroup className="mb-4">
+                    <CInputGroupText><CIcon icon={cilLockLocked} /></CInputGroupText>
+                    <CFormInput
+                      type="password"
+                      placeholder="Password"
+                      autoComplete="new-password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                    />
+                  </CInputGroup>
+                  <CButton type="submit" color="primary" className="w-100" disabled={submitting}>
+                    {submitting ? 'Creating…' : 'Create Account'}
+                  </CButton>
+                  <div className="text-center mt-3">
+                    <small className="text-body-secondary">
+                      Already have an account? <Link to="/login">Log in</Link>
+                    </small>
+                  </div>
+                </CForm>
+              </CCardBody>
+            </CCard>
+          </CCol>
+        </CRow>
+      </CContainer>
     </div>
   );
 }

@@ -1,6 +1,21 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCardGroup,
+  CCol,
+  CContainer,
+  CForm,
+  CFormInput,
+  CInputGroup,
+  CInputGroupText,
+  CRow,
+} from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { cilLockLocked, cilUser } from '@coreui/icons';
 
 export function LoginPage() {
   const { login, isAuthenticated } = useAuth();
@@ -10,7 +25,7 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) navigate('/dashboard', { replace: true });
+    if (isAuthenticated) navigate('/admin/dashboard', { replace: true });
   }, [isAuthenticated, navigate]);
 
   async function onSubmit(e: FormEvent) {
@@ -18,7 +33,7 @@ export function LoginPage() {
     setSubmitting(true);
     try {
       await login({ email, password });
-      navigate('/dashboard', { replace: true });
+      navigate('/admin/dashboard', { replace: true });
     } catch {
       /* toast handled in AuthContext */
     } finally {
@@ -27,36 +42,60 @@ export function LoginPage() {
   }
 
   return (
-    <div className="page page--narrow">
-      <h1>Log in</h1>
-      <form className="form" onSubmit={onSubmit}>
-        <label className="form__field">
-          <span>Email</span>
-          <input
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(ev) => setEmail(ev.target.value)}
-            required
-          />
-        </label>
-        <label className="form__field">
-          <span>Password</span>
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(ev) => setPassword(ev.target.value)}
-            required
-          />
-        </label>
-        <button type="submit" className="btn btn--primary" disabled={submitting}>
-          {submitting ? 'Signing in…' : 'Sign in'}
-        </button>
-      </form>
-      <p className="muted">
-        No account? <Link to="/signup">Sign up</Link>
-      </p>
+    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
+      <CContainer>
+        <CRow className="justify-content-center">
+          <CCol md={8} lg={6} xl={5}>
+            <CCardGroup>
+              <CCard className="p-4">
+                <CCardBody>
+                  <CForm onSubmit={onSubmit}>
+                    <div className="text-center mb-4">
+                      <img src="/alkhidmat-logo.png" alt="ALKHIDMAT" height={56} style={{ objectFit: 'contain' }} />
+                    </div>
+                    <h1 className="h3">Login</h1>
+                    <p className="text-body-secondary">Sign in to your account</p>
+                    <CInputGroup className="mb-3">
+                      <CInputGroupText><CIcon icon={cilUser} /></CInputGroupText>
+                      <CFormInput
+                        type="email"
+                        placeholder="Email"
+                        autoComplete="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
+                    </CInputGroup>
+                    <CInputGroup className="mb-4">
+                      <CInputGroupText><CIcon icon={cilLockLocked} /></CInputGroupText>
+                      <CFormInput
+                        type="password"
+                        placeholder="Password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                      />
+                    </CInputGroup>
+                    <CRow>
+                      <CCol xs={6}>
+                        <CButton type="submit" color="primary" className="px-4" disabled={submitting}>
+                          {submitting ? 'Signing in…' : 'Login'}
+                        </CButton>
+                      </CCol>
+                      <CCol xs={6} className="text-end">
+                        <Link to="/signup" className="text-decoration-none">
+                          Create account
+                        </Link>
+                      </CCol>
+                    </CRow>
+                  </CForm>
+                </CCardBody>
+              </CCard>
+            </CCardGroup>
+          </CCol>
+        </CRow>
+      </CContainer>
     </div>
   );
 }
