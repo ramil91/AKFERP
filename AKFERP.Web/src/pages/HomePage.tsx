@@ -1,98 +1,78 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import {
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCol,
-  CRow,
-  CButton,
-  CCallout,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilSpeedometer, cilUser, cilLockLocked } from '@coreui/icons';
+import { IconDashboard, IconUser, IconLock } from '@tabler/icons-react';
 
 export function HomePage() {
   const { isAuthenticated } = useAuth();
 
   return (
     <>
-      <CRow className="mb-4">
-        <CCol>
-          <h1 className="mb-1">Welcome to AKFERP</h1>
-          <p className="text-body-secondary fs-5">
+      <div className="page-header d-print-none mb-4">
+        <div className="container-xl">
+          <h2 className="page-title">Welcome to AKFERP</h2>
+          <div className="text-muted mt-1">
             ALKHIDMAT Foundation ERP — manage operations, records, and reports.
-          </p>
-        </CCol>
-      </CRow>
+          </div>
+        </div>
+      </div>
 
-      <CRow className="g-4 mb-4">
-        <CCol sm={6} xl={4}>
-          <CCard className="h-100">
-            <CCardBody className="d-flex flex-column align-items-center text-center p-4">
-              <CIcon icon={cilSpeedometer} size="3xl" className="text-primary mb-3" />
-              <h5>Dashboard</h5>
-              <p className="text-body-secondary">View real-time metrics and operational data at a glance.</p>
+      <div className="row row-deck row-cards g-4 mb-4">
+        <div className="col-sm-6 col-xl-4">
+          <div className="card h-100">
+            <div className="card-body d-flex flex-column align-items-center text-center p-4">
+              <IconDashboard size={48} className="text-primary mb-3" />
+              <h3 className="card-title">Dashboard</h3>
+              <p className="text-muted">View real-time metrics and operational data at a glance.</p>
               {isAuthenticated ? (
-                <CButton color="primary" as={Link} to="/admin/dashboard" className="mt-auto">
-                  Go to Dashboard
-                </CButton>
+                <Link to="/admin/dashboard" className="btn btn-primary mt-auto">Go to Dashboard</Link>
               ) : (
-                <CButton color="primary" as={Link} to="/login" className="mt-auto">
-                  Sign in to access
-                </CButton>
+                <Link to="/login" className="btn btn-primary mt-auto">Sign in to access</Link>
               )}
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol sm={6} xl={4}>
-          <CCard className="h-100">
-            <CCardBody className="d-flex flex-column align-items-center text-center p-4">
-              <CIcon icon={cilUser} size="3xl" className="text-success mb-3" />
-              <h5>User Management</h5>
-              <p className="text-body-secondary">Manage user accounts, roles, and permissions for the system.</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-sm-6 col-xl-4">
+          <div className="card h-100">
+            <div className="card-body d-flex flex-column align-items-center text-center p-4">
+              <IconUser size={48} className="text-success mb-3" />
+              <h3 className="card-title">User Management</h3>
+              <p className="text-muted">Manage user accounts, roles, and permissions for the system.</p>
               {isAuthenticated ? (
-                <CButton color="success" as={Link} to="/admin/users" className="mt-auto">
-                  Manage Users
-                </CButton>
+                <Link to="/admin/users" className="btn btn-success mt-auto">Manage Users</Link>
               ) : (
-                <CButton color="success" as={Link} to="/signup" className="mt-auto">
-                  Create Account
-                </CButton>
+                <Link to="/signup" className="btn btn-success mt-auto">Create Account</Link>
               )}
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol sm={6} xl={4}>
-          <CCard className="h-100">
-            <CCardBody className="d-flex flex-column align-items-center text-center p-4">
-              <CIcon icon={cilLockLocked} size="3xl" className="text-warning mb-3" />
-              <h5>Security</h5>
-              <p className="text-body-secondary">Role-based access control with JWT authentication and audit logs.</p>
-              <CButton color="warning" as={Link} to={isAuthenticated ? '/admin/settings' : '/login'} className="mt-auto text-white">
+            </div>
+          </div>
+        </div>
+        <div className="col-sm-6 col-xl-4">
+          <div className="card h-100">
+            <div className="card-body d-flex flex-column align-items-center text-center p-4">
+              <IconLock size={48} className="text-warning mb-3" />
+              <h3 className="card-title">Security</h3>
+              <p className="text-muted">Role-based access control with JWT authentication and audit logs.</p>
+              <Link to={isAuthenticated ? '/admin/settings' : '/login'} className="btn btn-warning mt-auto">
                 {isAuthenticated ? 'Settings' : 'Learn More'}
-              </CButton>
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <CRow>
-        <CCol>
-          <CCard>
-            <CCardHeader>
-              <strong>Quick Start</strong>
-            </CCardHeader>
-            <CCardBody>
-              <CCallout color="info" className="mb-0">
+      <div className="row">
+        <div className="col">
+          <div className="card">
+            <div className="card-header"><h3 className="card-title">Quick Start</h3></div>
+            <div className="card-body">
+              <div className="alert alert-info mb-0">
                 <strong>Mock auth enabled:</strong> Use{' '}
                 <code>demo@akferp.local</code> / <code>Demo@123</code> to sign in.
                 Set <code>VITE_USE_MOCK_AUTH=true</code> in your environment.
-              </CCallout>
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

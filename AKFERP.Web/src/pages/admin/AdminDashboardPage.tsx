@@ -1,22 +1,12 @@
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCol,
-  CRow,
-  CWidgetStatsA,
-  CProgress,
-  CTable,
-  CTableHead,
-  CTableRow,
-  CTableHeaderCell,
-  CTableBody,
-  CTableDataCell,
-  CBadge,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilCloudDownload } from '@coreui/icons';
-import { CChartLine, CChartBar, CChartDoughnut } from '@coreui/react-chartjs';
+  Chart as ChartJS,
+  CategoryScale, LinearScale, PointElement, LineElement,
+  BarElement, ArcElement, Filler, Tooltip, Legend,
+} from 'chart.js';
+import { IconDownload } from '@tabler/icons-react';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Filler, Tooltip, Legend);
 
 const recentItems = [
   { id: 'R-0001', name: 'Community Program A', status: 'Active', date: '2026-04-01' },
@@ -26,249 +16,146 @@ const recentItems = [
   { id: 'R-0005', name: 'Education Fund 2026', status: 'Active', date: '2026-04-05' },
 ];
 
-const statusColor = (s: string) =>
-  s === 'Active' ? 'success' : s === 'Pending' ? 'warning' : 'secondary';
+const statusBadge = (s: string) =>
+  s === 'Active' ? 'bg-success' : s === 'Pending' ? 'bg-warning' : 'bg-secondary';
 
 export function AdminDashboardPage() {
   return (
     <>
-      {/* ——— Stat widgets ——— */}
-      <CRow className="g-4 mb-4">
-        <CCol sm={6} xl={3}>
-          <CWidgetStatsA
-            color="primary"
-            value="128"
-            title="Active Programs"
-            chart={
-              <CChartLine
-                className="mt-3 mx-3"
-                style={{ height: '70px' }}
-                data={{
-                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                  datasets: [
-                    {
-                      label: 'Programs',
-                      backgroundColor: 'transparent',
-                      borderColor: 'rgba(255,255,255,.55)',
-                      pointBackgroundColor: '#fff',
-                      data: [65, 59, 84, 84, 51, 55, 128],
-                    },
-                  ],
-                }}
-                options={{ plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }}
-              />
-            }
-          />
-        </CCol>
-        <CCol sm={6} xl={3}>
-          <CWidgetStatsA
-            color="info"
-            value="14"
-            title="Pending Reviews"
-            chart={
-              <CChartBar
-                className="mt-3 mx-3"
-                style={{ height: '70px' }}
-                data={{
-                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                  datasets: [
-                    {
-                      label: 'Reviews',
-                      backgroundColor: 'rgba(255,255,255,.2)',
-                      borderColor: 'rgba(255,255,255,.55)',
-                      data: [4, 7, 6, 3, 9, 5, 14],
-                      barPercentage: 0.6,
-                    },
-                  ],
-                }}
-                options={{ plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }}
-              />
-            }
-          />
-        </CCol>
-        <CCol sm={6} xl={3}>
-          <CWidgetStatsA
-            color="warning"
-            value="1,024"
-            title="Completed"
-            chart={
-              <CChartLine
-                className="mt-3"
-                style={{ height: '70px' }}
-                data={{
-                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                  datasets: [
-                    {
-                      label: 'Completed',
-                      backgroundColor: 'rgba(255,255,255,.2)',
-                      borderColor: 'rgba(255,255,255,.55)',
-                      fill: true,
-                      data: [90, 120, 180, 220, 250, 310, 1024],
-                    },
-                  ],
-                }}
-                options={{ plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }}
-              />
-            }
-          />
-        </CCol>
-        <CCol sm={6} xl={3}>
-          <CWidgetStatsA
-            color="danger"
-            value="8"
-            title="Scheduled Reports"
-            chart={
-              <CChartBar
-                className="mt-3 mx-3"
-                style={{ height: '70px' }}
-                data={{
-                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                  datasets: [
-                    {
-                      label: 'Reports',
-                      backgroundColor: 'rgba(255,255,255,.2)',
-                      borderColor: 'rgba(255,255,255,.55)',
-                      data: [1, 2, 1, 3, 2, 3, 8],
-                      barPercentage: 0.6,
-                    },
-                  ],
-                }}
-                options={{ plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }}
-              />
-            }
-          />
-        </CCol>
-      </CRow>
+      {/* Stat cards */}
+      <div className="row row-deck row-cards g-4 mb-4">
+        {[
+          { title: 'Active Programs', value: '128', color: 'bg-primary' },
+          { title: 'Pending Reviews', value: '14', color: 'bg-info' },
+          { title: 'Completed', value: '1,024', color: 'bg-warning' },
+          { title: 'Scheduled Reports', value: '8', color: 'bg-danger' },
+        ].map((stat) => (
+          <div key={stat.title} className="col-sm-6 col-xl-3">
+            <div className="card">
+              <div className="card-body">
+                <div className="d-flex align-items-center">
+                  <div className={`stamp ${stat.color} me-3`}>
+                    <span className="h3 text-white mb-0">{stat.value}</span>
+                  </div>
+                  <div>
+                    <div className="subheader text-muted">{stat.title}</div>
+                    <div className="h3 mb-0">{stat.value}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-      {/* ——— Charts row ——— */}
-      <CRow className="g-4 mb-4">
-        <CCol md={8}>
-          <CCard className="h-100">
-            <CCardHeader className="d-flex justify-content-between align-items-center">
-              <strong>Monthly Activity</strong>
-              <CBadge color="info">2026</CBadge>
-            </CCardHeader>
-            <CCardBody>
-              <CChartLine
-                style={{ height: '260px' }}
+      {/* Charts row */}
+      <div className="row row-deck row-cards g-4 mb-4">
+        <div className="col-md-8">
+          <div className="card h-100">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <h3 className="card-title">Monthly Activity</h3>
+              <span className="badge bg-info">2026</span>
+            </div>
+            <div className="card-body">
+              <div style={{ height: 260 }}>
+                <Line
+                  data={{
+                    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                    datasets: [
+                      {
+                        label: 'New records',
+                        backgroundColor: 'rgba(75,192,192,0.2)',
+                        borderColor: 'rgb(75,192,192)',
+                        fill: true,
+                        data: [40,60,55,70,80,65,90,85,95,100,110,120],
+                      },
+                      {
+                        label: 'Completed',
+                        backgroundColor: 'rgba(54,162,235,0.2)',
+                        borderColor: 'rgb(54,162,235)',
+                        fill: true,
+                        data: [30,45,50,60,70,55,80,75,90,88,100,110],
+                      },
+                    ],
+                  }}
+                  options={{ maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="card h-100">
+            <div className="card-header"><h3 className="card-title">Categories</h3></div>
+            <div className="card-body d-flex align-items-center">
+              <Doughnut
                 data={{
-                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                  datasets: [
-                    {
-                      label: 'New records',
-                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                      borderColor: 'rgb(75, 192, 192)',
-                      fill: true,
-                      data: [40, 60, 55, 70, 80, 65, 90, 85, 95, 100, 110, 120],
-                    },
-                    {
-                      label: 'Completed',
-                      backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                      borderColor: 'rgb(54, 162, 235)',
-                      fill: true,
-                      data: [30, 45, 50, 60, 70, 55, 80, 75, 90, 88, 100, 110],
-                    },
-                  ],
-                }}
-                options={{
-                  maintainAspectRatio: false,
-                  plugins: { legend: { position: 'top' } },
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol md={4}>
-          <CCard className="h-100">
-            <CCardHeader><strong>Categories</strong></CCardHeader>
-            <CCardBody className="d-flex align-items-center">
-              <CChartDoughnut
-                data={{
-                  labels: ['Programs', 'Services', 'Support', 'Other'],
-                  datasets: [
-                    {
-                      backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#6366f1'],
-                      data: [40, 25, 20, 15],
-                    },
-                  ],
+                  labels: ['Programs','Services','Support','Other'],
+                  datasets: [{ backgroundColor: ['#3b82f6','#10b981','#f59e0b','#6366f1'], data: [40,25,20,15] }],
                 }}
                 options={{ plugins: { legend: { position: 'bottom' } } }}
               />
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* ——— Progress + recent table ——— */}
-      <CRow className="g-4 mb-4">
-        <CCol md={4}>
-          <CCard className="h-100">
-            <CCardHeader><strong>Progress</strong></CCardHeader>
-            <CCardBody>
-              <div className="mb-3">
-                <div className="d-flex justify-content-between mb-1">
-                  <small>Programs</small>
-                  <small className="text-body-secondary">72%</small>
+      {/* Progress + recent table */}
+      <div className="row row-deck row-cards g-4 mb-4">
+        <div className="col-md-4">
+          <div className="card h-100">
+            <div className="card-header"><h3 className="card-title">Progress</h3></div>
+            <div className="card-body">
+              {[
+                { label: 'Programs', pct: 72, color: 'bg-primary' },
+                { label: 'Services', pct: 58, color: 'bg-success' },
+                { label: 'Support', pct: 85, color: 'bg-warning' },
+                { label: 'Reports', pct: 40, color: 'bg-danger' },
+              ].map((p) => (
+                <div key={p.label} className="mb-3">
+                  <div className="d-flex justify-content-between mb-1">
+                    <small>{p.label}</small>
+                    <small className="text-muted">{p.pct}%</small>
+                  </div>
+                  <div className="progress progress-sm">
+                    <div className={`progress-bar ${p.color}`} style={{ width: `${p.pct}%` }} role="progressbar" aria-valuenow={p.pct} aria-valuemin={0} aria-valuemax={100} />
+                  </div>
                 </div>
-                <CProgress thin color="primary" value={72} />
-              </div>
-              <div className="mb-3">
-                <div className="d-flex justify-content-between mb-1">
-                  <small>Services</small>
-                  <small className="text-body-secondary">58%</small>
-                </div>
-                <CProgress thin color="success" value={58} />
-              </div>
-              <div className="mb-3">
-                <div className="d-flex justify-content-between mb-1">
-                  <small>Support</small>
-                  <small className="text-body-secondary">85%</small>
-                </div>
-                <CProgress thin color="warning" value={85} />
-              </div>
-              <div>
-                <div className="d-flex justify-content-between mb-1">
-                  <small>Reports</small>
-                  <small className="text-body-secondary">40%</small>
-                </div>
-                <CProgress thin color="danger" value={40} />
-              </div>
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol md={8}>
-          <CCard className="h-100">
-            <CCardHeader className="d-flex justify-content-between align-items-center">
-              <strong>Recent Records</strong>
-              <CIcon icon={cilCloudDownload} />
-            </CCardHeader>
-            <CCardBody className="p-0">
-              <CTable align="middle" hover responsive className="mb-0">
-                <CTableHead className="text-nowrap">
-                  <CTableRow>
-                    <CTableHeaderCell>ID</CTableHeaderCell>
-                    <CTableHeaderCell>Name</CTableHeaderCell>
-                    <CTableHeaderCell>Status</CTableHeaderCell>
-                    <CTableHeaderCell>Date</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="col-md-8">
+          <div className="card h-100">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <h3 className="card-title">Recent Records</h3>
+              <IconDownload size={18} />
+            </div>
+            <div className="table-responsive">
+              <table className="table table-vcenter card-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
                   {recentItems.map((r) => (
-                    <CTableRow key={r.id}>
-                      <CTableDataCell className="font-monospace">{r.id}</CTableDataCell>
-                      <CTableDataCell>{r.name}</CTableDataCell>
-                      <CTableDataCell>
-                        <CBadge color={statusColor(r.status)}>{r.status}</CBadge>
-                      </CTableDataCell>
-                      <CTableDataCell>{r.date}</CTableDataCell>
-                    </CTableRow>
+                    <tr key={r.id}>
+                      <td className="font-monospace">{r.id}</td>
+                      <td>{r.name}</td>
+                      <td><span className={`badge ${statusBadge(r.status)}`}>{r.status}</span></td>
+                      <td>{r.date}</td>
+                    </tr>
                   ))}
-                </CTableBody>
-              </CTable>
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

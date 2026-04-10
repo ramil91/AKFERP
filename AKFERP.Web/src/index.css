@@ -1,22 +1,10 @@
-@import '@coreui/coreui/dist/css/coreui.min.css';
+@import '@tabler/core/dist/css/tabler.min.css';
 
-/* ALKHIDMAT brand overrides */
 :root {
-  --cui-primary: #0059a3;
-  --cui-primary-rgb: 0, 89, 163;
+  --tblr-primary: #0059a3;
+  --tblr-primary-rgb: 0, 89, 163;
 }
 
 body {
-  font-family: 'Roboto', var(--cui-body-font-family);
-}
-
-.sidebar-brand img {
-  max-height: 40px;
-  object-fit: contain;
-}
-
-/* Offset main wrapper to account for fixed sidebar */
-.wrapper {
-  padding-inline-start: var(--cui-sidebar-occupy-start, 0);
-  transition: padding 0.15s;
+  font-family: 'Roboto', var(--tblr-font-sans-serif);
 }

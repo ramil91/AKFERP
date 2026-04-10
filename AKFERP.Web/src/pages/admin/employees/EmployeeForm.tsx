@@ -1,14 +1,9 @@
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  CCard, CCardBody, CCardHeader, CCardFooter,
-  CCol, CRow,
-  CForm, CFormLabel, CFormInput, CFormSelect, CFormCheck, CFormFeedback,
-  CButton, CAlert, CNav, CNavItem, CNavLink, CTabContent, CTabPane,
-  CInputGroup, CInputGroupText,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilSave, cilArrowLeft, cilUser, cilEnvelopeClosed, cilPhone, cilLocationPin } from '@coreui/icons';
+  IconDeviceFloppy, IconArrowLeft, IconUser,
+  IconMail, IconPhone, IconMapPin,
+} from '@tabler/icons-react';
 import { employeeStore, type Employee } from '@/data/employees';
 
 type Props = {
@@ -19,7 +14,6 @@ const DEPARTMENTS = ['Administration', 'Programs', 'Finance', 'HR', 'IT', 'Opera
 const DESIGNATIONS = ['Manager', 'Senior Officer', 'Officer', 'Assistant', 'Coordinator', 'Director', 'Intern'];
 const CITIES = ['Karachi', 'Lahore', 'Islamabad', 'Peshawar', 'Quetta', 'Multan', 'Faisalabad'];
 
-/** Shared form for Add + Edit employee pages. */
 export function EmployeeForm({ existing }: Props) {
   const navigate = useNavigate();
   const isEdit = !!existing;
@@ -69,218 +63,222 @@ export function EmployeeForm({ existing }: Props) {
     setSubmitting(false);
   }
 
+  const tabs = ['Personal Info', 'Job Details', 'Address & Other'];
+
   return (
-    <CRow>
-      <CCol xs={12}>
-        <CCard>
-          <CCardHeader className="d-flex justify-content-between align-items-center">
-            <strong>{isEdit ? `Edit Employee — ${existing?.id}` : 'Add Employee'}</strong>
-            <CButton color="secondary" variant="ghost" size="sm" as={Link} to="/admin/employees">
-              <CIcon icon={cilArrowLeft} className="me-1" />
-              Back to list
-            </CButton>
-          </CCardHeader>
+    <div className="card">
+      <div className="card-header d-flex justify-content-between align-items-center">
+        <h3 className="card-title">{isEdit ? `Edit Employee \u2014 ${existing?.id}` : 'Add Employee'}</h3>
+        <Link to="/admin/employees" className="btn btn-ghost-secondary btn-sm">
+          <IconArrowLeft size={16} className="me-1" />
+          Back to list
+        </Link>
+      </div>
 
-          <CCardBody>
-            {successMsg && (
-              <CAlert color="success" dismissible onClose={() => setSuccessMsg('')}>
-                {successMsg}{' '}
-                <Link to="/admin/employees" className="alert-link">Go to list</Link>
-              </CAlert>
-            )}
+      <div className="card-body">
+        {successMsg && (
+          <div className="alert alert-success alert-dismissible" role="alert">
+            {successMsg}{' '}
+            <Link to="/admin/employees" className="alert-link">Go to list</Link>
+            <button type="button" className="btn-close" onClick={() => setSuccessMsg('')} aria-label="Close" />
+          </div>
+        )}
 
-            {/* ——— Tabs ——— */}
-            <CNav variant="tabs" className="mb-3">
-              <CNavItem>
-                <CNavLink active={activeTab === 0} onClick={() => setActiveTab(0)} role="button">
-                  Personal Info
-                </CNavLink>
-              </CNavItem>
-              <CNavItem>
-                <CNavLink active={activeTab === 1} onClick={() => setActiveTab(1)} role="button">
-                  Job Details
-                </CNavLink>
-              </CNavItem>
-              <CNavItem>
-                <CNavLink active={activeTab === 2} onClick={() => setActiveTab(2)} role="button">
-                  Address &amp; Other
-                </CNavLink>
-              </CNavItem>
-            </CNav>
+        {/* Tabs */}
+        <ul className="nav nav-tabs mb-3">
+          {tabs.map((t, i) => (
+            <li key={t} className="nav-item">
+              <button
+                className={`nav-link${activeTab === i ? ' active' : ''}`}
+                onClick={() => setActiveTab(i)}
+                type="button"
+              >
+                {t}
+              </button>
+            </li>
+          ))}
+        </ul>
 
-            <CForm noValidate validated={validated} onSubmit={onSubmit}>
-              <CTabContent>
-                {/* ——— Tab 1: Personal ——— */}
-                <CTabPane visible={activeTab === 0}>
-                  <CRow className="g-3">
-                    <CCol md={6}>
-                      <CFormLabel htmlFor="emp-fn">First Name *</CFormLabel>
-                      <CInputGroup>
-                        <CInputGroupText><CIcon icon={cilUser} /></CInputGroupText>
-                        <CFormInput
-                          id="emp-fn"
-                          value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
-                          placeholder="Ahmed"
-                          required
-                        />
-                        <CFormFeedback invalid>First name is required.</CFormFeedback>
-                      </CInputGroup>
-                    </CCol>
-                    <CCol md={6}>
-                      <CFormLabel htmlFor="emp-ln">Last Name *</CFormLabel>
-                      <CInputGroup>
-                        <CInputGroupText><CIcon icon={cilUser} /></CInputGroupText>
-                        <CFormInput
-                          id="emp-ln"
-                          value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
-                          placeholder="Khan"
-                          required
-                        />
-                        <CFormFeedback invalid>Last name is required.</CFormFeedback>
-                      </CInputGroup>
-                    </CCol>
-                    <CCol md={6}>
-                      <CFormLabel htmlFor="emp-email">Email *</CFormLabel>
-                      <CInputGroup>
-                        <CInputGroupText><CIcon icon={cilEnvelopeClosed} /></CInputGroupText>
-                        <CFormInput
-                          id="emp-email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="ahmed.khan@akferp.local"
-                          required
-                        />
-                        <CFormFeedback invalid>Valid email is required.</CFormFeedback>
-                      </CInputGroup>
-                    </CCol>
-                    <CCol md={6}>
-                      <CFormLabel htmlFor="emp-phone">Phone</CFormLabel>
-                      <CInputGroup>
-                        <CInputGroupText><CIcon icon={cilPhone} /></CInputGroupText>
-                        <CFormInput
-                          id="emp-phone"
-                          type="tel"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="+92 300 1234567"
-                        />
-                      </CInputGroup>
-                    </CCol>
-                  </CRow>
-                </CTabPane>
-
-                {/* ——— Tab 2: Job ——— */}
-                <CTabPane visible={activeTab === 1}>
-                  <CRow className="g-3">
-                    <CCol md={6}>
-                      <CFormLabel htmlFor="emp-dept">Department *</CFormLabel>
-                      <CFormSelect id="emp-dept" value={department} onChange={(e) => setDepartment(e.target.value)} required>
-                        {DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}
-                      </CFormSelect>
-                    </CCol>
-                    <CCol md={6}>
-                      <CFormLabel htmlFor="emp-desig">Designation *</CFormLabel>
-                      <CFormSelect id="emp-desig" value={designation} onChange={(e) => setDesignation(e.target.value)} required>
-                        {DESIGNATIONS.map((d) => <option key={d}>{d}</option>)}
-                      </CFormSelect>
-                    </CCol>
-                    <CCol md={6}>
-                      <CFormLabel htmlFor="emp-join">Joining Date *</CFormLabel>
-                      <CFormInput
-                        id="emp-join"
-                        type="date"
-                        value={joiningDate}
-                        onChange={(e) => setJoiningDate(e.target.value)}
-                        required
-                      />
-                      <CFormFeedback invalid>Joining date is required.</CFormFeedback>
-                    </CCol>
-                    <CCol md={6}>
-                      <CFormLabel htmlFor="emp-salary">Salary (PKR)</CFormLabel>
-                      <CInputGroup>
-                        <CInputGroupText>Rs.</CInputGroupText>
-                        <CFormInput
-                          id="emp-salary"
-                          type="number"
-                          min={0}
-                          step={1000}
-                          value={salary}
-                          onChange={(e) => setSalary(e.target.value)}
-                          placeholder="50000"
-                        />
-                      </CInputGroup>
-                    </CCol>
-                    <CCol md={6}>
-                      <CFormLabel htmlFor="emp-status">Status</CFormLabel>
-                      <CFormSelect
-                        id="emp-status"
-                        value={status}
-                        onChange={(e) => setStatus(e.target.value as Employee['status'])}
-                      >
-                        <option>Active</option>
-                        <option>On Leave</option>
-                        <option>Resigned</option>
-                      </CFormSelect>
-                    </CCol>
-                  </CRow>
-                </CTabPane>
-
-                {/* ——— Tab 3: Address ——— */}
-                <CTabPane visible={activeTab === 2}>
-                  <CRow className="g-3">
-                    <CCol md={8}>
-                      <CFormLabel htmlFor="emp-addr">Street Address</CFormLabel>
-                      <CInputGroup>
-                        <CInputGroupText><CIcon icon={cilLocationPin} /></CInputGroupText>
-                        <CFormInput
-                          id="emp-addr"
-                          value={address}
-                          onChange={(e) => setAddress(e.target.value)}
-                          placeholder="10 Street 5, Block A"
-                        />
-                      </CInputGroup>
-                    </CCol>
-                    <CCol md={4}>
-                      <CFormLabel htmlFor="emp-city">City</CFormLabel>
-                      <CFormSelect id="emp-city" value={city} onChange={(e) => setCity(e.target.value)}>
-                        {CITIES.map((c) => <option key={c}>{c}</option>)}
-                      </CFormSelect>
-                    </CCol>
-                    <CCol xs={12}>
-                      <CFormCheck
-                        id="emp-welcome"
-                        label="Send welcome email to the employee"
-                        checked={sendWelcome}
-                        onChange={(e) => setSendWelcome(e.target.checked)}
-                      />
-                    </CCol>
-                  </CRow>
-                </CTabPane>
-              </CTabContent>
-
-              {/* ——— Submit row ——— */}
-              <div className="d-flex gap-2 mt-4">
-                <CButton type="submit" color="primary" disabled={submitting}>
-                  <CIcon icon={cilSave} className="me-1" />
-                  {submitting ? 'Saving…' : isEdit ? 'Update Employee' : 'Create Employee'}
-                </CButton>
-                <CButton type="button" color="secondary" variant="outline" onClick={() => navigate('/admin/employees')}>
-                  Cancel
-                </CButton>
+        <form noValidate className={validated ? 'was-validated' : ''} onSubmit={onSubmit}>
+          {/* Tab 1: Personal */}
+          <div className={activeTab === 0 ? '' : 'd-none'}>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="emp-fn">First Name *</label>
+                <div className="input-group">
+                  <span className="input-group-text"><IconUser size={16} /></span>
+                  <input
+                    id="emp-fn"
+                    className="form-control"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Ahmed"
+                    required
+                  />
+                  <div className="invalid-feedback">First name is required.</div>
+                </div>
               </div>
-            </CForm>
-          </CCardBody>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="emp-ln">Last Name *</label>
+                <div className="input-group">
+                  <span className="input-group-text"><IconUser size={16} /></span>
+                  <input
+                    id="emp-ln"
+                    className="form-control"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Khan"
+                    required
+                  />
+                  <div className="invalid-feedback">Last name is required.</div>
+                </div>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="emp-email">Email *</label>
+                <div className="input-group">
+                  <span className="input-group-text"><IconMail size={16} /></span>
+                  <input
+                    id="emp-email"
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="ahmed.khan@akferp.local"
+                    required
+                  />
+                  <div className="invalid-feedback">Valid email is required.</div>
+                </div>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="emp-phone">Phone</label>
+                <div className="input-group">
+                  <span className="input-group-text"><IconPhone size={16} /></span>
+                  <input
+                    id="emp-phone"
+                    type="tel"
+                    className="form-control"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+92 300 1234567"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <CCardFooter className="text-body-secondary small">
-            {isEdit
-              ? `Editing ${existing?.firstName} ${existing?.lastName} (${existing?.id})`
-              : 'Fill all required (*) fields across the tabs then click Create Employee.'}
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
+          {/* Tab 2: Job */}
+          <div className={activeTab === 1 ? '' : 'd-none'}>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="emp-dept">Department *</label>
+                <select id="emp-dept" className="form-select" value={department} onChange={(e) => setDepartment(e.target.value)} required>
+                  {DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="emp-desig">Designation *</label>
+                <select id="emp-desig" className="form-select" value={designation} onChange={(e) => setDesignation(e.target.value)} required>
+                  {DESIGNATIONS.map((d) => <option key={d}>{d}</option>)}
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="emp-join">Joining Date *</label>
+                <input
+                  id="emp-join"
+                  type="date"
+                  className="form-control"
+                  value={joiningDate}
+                  onChange={(e) => setJoiningDate(e.target.value)}
+                  required
+                />
+                <div className="invalid-feedback">Joining date is required.</div>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="emp-salary">Salary (PKR)</label>
+                <div className="input-group">
+                  <span className="input-group-text">Rs.</span>
+                  <input
+                    id="emp-salary"
+                    type="number"
+                    min={0}
+                    step={1000}
+                    className="form-control"
+                    value={salary}
+                    onChange={(e) => setSalary(e.target.value)}
+                    placeholder="50000"
+                  />
+                </div>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="emp-status">Status</label>
+                <select
+                  id="emp-status"
+                  className="form-select"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as Employee['status'])}
+                >
+                  <option>Active</option>
+                  <option>On Leave</option>
+                  <option>Resigned</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Tab 3: Address */}
+          <div className={activeTab === 2 ? '' : 'd-none'}>
+            <div className="row g-3">
+              <div className="col-md-8">
+                <label className="form-label" htmlFor="emp-addr">Street Address</label>
+                <div className="input-group">
+                  <span className="input-group-text"><IconMapPin size={16} /></span>
+                  <input
+                    id="emp-addr"
+                    className="form-control"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="10 Street 5, Block A"
+                  />
+                </div>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label" htmlFor="emp-city">City</label>
+                <select id="emp-city" className="form-select" value={city} onChange={(e) => setCity(e.target.value)}>
+                  {CITIES.map((c) => <option key={c}>{c}</option>)}
+                </select>
+              </div>
+              <div className="col-12">
+                <label className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    checked={sendWelcome}
+                    onChange={(e) => setSendWelcome(e.target.checked)}
+                  />
+                  <span className="form-check-label">Send welcome email to the employee</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Submit row */}
+          <div className="d-flex gap-2 mt-4">
+            <button type="submit" className="btn btn-primary" disabled={submitting}>
+              <IconDeviceFloppy size={16} className="me-1" />
+              {submitting ? 'Saving\u2026' : isEdit ? 'Update Employee' : 'Create Employee'}
+            </button>
+            <button type="button" className="btn btn-outline-secondary" onClick={() => navigate('/admin/employees')}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div className="card-footer text-muted small">
+        {isEdit
+          ? `Editing ${existing?.firstName} ${existing?.lastName} (${existing?.id})`
+          : 'Fill all required (*) fields across the tabs then click Create Employee.'}
+      </div>
+    </div>
   );
 }

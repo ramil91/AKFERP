@@ -1,5 +1,4 @@
-import { useLocation } from 'react-router-dom';
-import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react';
+import { Link, useLocation } from 'react-router-dom';
 
 const routeNames: Record<string, string> = {
   '/': 'Home',
@@ -47,15 +46,17 @@ export function AppBreadcrumb() {
   }
 
   return (
-    <CBreadcrumb className="my-0">
-      <CBreadcrumbItem href="/">Home</CBreadcrumbItem>
+    <ol className="breadcrumb" aria-label="breadcrumbs">
+      <li className="breadcrumb-item"><Link to="/">Home</Link></li>
       {crumbs
         .filter((c) => c.pathname !== '/')
-        .map((c) => (
-          <CBreadcrumbItem key={c.pathname} {...(c.active ? { active: true } : { href: c.pathname })}>
-            {c.name}
-          </CBreadcrumbItem>
-        ))}
-    </CBreadcrumb>
+        .map((c) =>
+          c.active ? (
+            <li key={c.pathname} className="breadcrumb-item active" aria-current="page">{c.name}</li>
+          ) : (
+            <li key={c.pathname} className="breadcrumb-item"><Link to={c.pathname}>{c.name}</Link></li>
+          ),
+        )}
+    </ol>
   );
 }

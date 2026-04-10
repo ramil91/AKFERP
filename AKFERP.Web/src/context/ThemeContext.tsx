@@ -43,7 +43,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     preference === 'system' ? (systemDark ? 'dark' : 'light') : preference;
 
   useEffect(() => {
-    document.documentElement.dataset.theme = resolved;
+    document.documentElement.dataset.bsTheme = resolved;
   }, [resolved]);
 
   useEffect(() => {

@@ -1,24 +1,15 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  CCard, CCardBody, CCardHeader, CCol, CRow,
-  CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell,
-  CPagination, CPaginationItem,
-  CFormSelect, CFormInput, CInputGroup, CInputGroupText,
-  CBadge, CButton, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter,
-  CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import {
-  cilPlus, cilSearch, cilPencil, cilTrash, cilCloudDownload,
-  cilFilter, cilOptions,
-} from '@coreui/icons';
+  IconPlus, IconSearch, IconFilter, IconDotsVertical,
+  IconPencil, IconTrash, IconDownload,
+} from '@tabler/icons-react';
 import { employeeStore, type Employee } from '@/data/employees';
 
 const PAGE_SIZES = [5, 10, 25, 50] as const;
 
-const statusColor = (s: Employee['status']) =>
-  s === 'Active' ? 'success' : s === 'On Leave' ? 'warning' : 'danger';
+const statusBadge = (s: Employee['status']) =>
+  s === 'Active' ? 'bg-success' : s === 'On Leave' ? 'bg-warning' : 'bg-danger';
 
 export function EmployeeListPage() {
   const [data, setData] = useState(() => employeeStore.getAll());
@@ -28,6 +19,7 @@ export function EmployeeListPage() {
   const [deptFilter, setDeptFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Employee | null>(null);
+  const [openActions, setOpenActions] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     let rows = data;
@@ -75,165 +67,184 @@ export function EmployeeListPage() {
 
   return (
     <>
-      <CRow>
-        <CCol>
-          <CCard>
-            <CCardHeader className="d-flex flex-wrap align-items-center justify-content-between gap-2">
-              <div>
-                <strong>Employees</strong>
-                <small className="text-body-secondary ms-2">({total} total)</small>
-              </div>
-              <div className="d-flex gap-2">
-                <CButton color="light" size="sm" title="Export CSV">
-                  <CIcon icon={cilCloudDownload} />
-                </CButton>
-                <CButton color="primary" size="sm" as={Link} to="/admin/employees/new">
-                  <CIcon icon={cilPlus} className="me-1" />
-                  Add Employee
-                </CButton>
-              </div>
-            </CCardHeader>
-            <CCardBody>
-              {/* ——— Filters toolbar ——— */}
-              <CRow className="mb-3 g-2 align-items-end">
-                <CCol sm={4} lg={3}>
-                  <CInputGroup size="sm">
-                    <CInputGroupText><CIcon icon={cilSearch} /></CInputGroupText>
-                    <CFormInput
-                      placeholder="Search name, email, ID…"
-                      value={search}
-                      onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                    />
-                  </CInputGroup>
-                </CCol>
-                <CCol sm={3} lg={2}>
-                  <CInputGroup size="sm">
-                    <CInputGroupText><CIcon icon={cilFilter} /></CInputGroupText>
-                    <CFormSelect
-                      value={deptFilter}
-                      onChange={(e) => { setDeptFilter(e.target.value); setPage(1); }}
-                    >
-                      <option value="">All Depts</option>
-                      {departments.map((d) => <option key={d} value={d}>{d}</option>)}
-                    </CFormSelect>
-                  </CInputGroup>
-                </CCol>
-                <CCol sm={2} lg={2}>
-                  <CFormSelect
-                    size="sm"
-                    value={statusFilter}
-                    onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-                  >
-                    <option value="">All Status</option>
-                    <option>Active</option>
-                    <option>On Leave</option>
-                    <option>Resigned</option>
-                  </CFormSelect>
-                </CCol>
-                <CCol sm="auto">
-                  <div className="d-flex align-items-center gap-2">
-                    <small className="text-body-secondary text-nowrap">Rows</small>
-                    <CFormSelect
-                      size="sm"
-                      style={{ width: 68 }}
-                      value={pageSize}
-                      onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
-                    >
-                      {PAGE_SIZES.map((n) => <option key={n} value={n}>{n}</option>)}
-                    </CFormSelect>
-                  </div>
-                </CCol>
-                <CCol className="text-end">
-                  <small className="text-body-secondary">
-                    {from}–{to} of {total}
-                  </small>
-                </CCol>
-              </CRow>
+      <div className="card">
+        <div className="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <div>
+            <h3 className="card-title">Employees</h3>
+            <small className="text-muted ms-2">({total} total)</small>
+          </div>
+          <div className="d-flex gap-2">
+            <button className="btn btn-outline-secondary btn-sm" title="Export CSV">
+              <IconDownload size={16} />
+            </button>
+            <Link to="/admin/employees/new" className="btn btn-primary btn-sm">
+              <IconPlus size={16} className="me-1" />
+              Add Employee
+            </Link>
+          </div>
+        </div>
 
-              {/* ——— Table ——— */}
-              <CTable align="middle" hover responsive bordered className="mb-0">
-                <CTableHead color="light">
-                  <CTableRow>
-                    <CTableHeaderCell>ID</CTableHeaderCell>
-                    <CTableHeaderCell>Name</CTableHeaderCell>
-                    <CTableHeaderCell className="d-none d-md-table-cell">Email</CTableHeaderCell>
-                    <CTableHeaderCell className="d-none d-lg-table-cell">Department</CTableHeaderCell>
-                    <CTableHeaderCell className="d-none d-lg-table-cell">Designation</CTableHeaderCell>
-                    <CTableHeaderCell>Status</CTableHeaderCell>
-                    <CTableHeaderCell className="d-none d-xl-table-cell">Joining</CTableHeaderCell>
-                    <CTableHeaderCell className="text-center" style={{ width: 80 }}>Actions</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {rows.length === 0 && (
-                    <CTableRow>
-                      <CTableDataCell colSpan={8} className="text-center text-body-secondary py-4">
-                        No employees found.
-                      </CTableDataCell>
-                    </CTableRow>
-                  )}
-                  {rows.map((r) => (
-                    <CTableRow key={r.id}>
-                      <CTableDataCell className="font-monospace">{r.id}</CTableDataCell>
-                      <CTableDataCell className="fw-semibold">{r.firstName} {r.lastName}</CTableDataCell>
-                      <CTableDataCell className="d-none d-md-table-cell">{r.email}</CTableDataCell>
-                      <CTableDataCell className="d-none d-lg-table-cell">{r.department}</CTableDataCell>
-                      <CTableDataCell className="d-none d-lg-table-cell">{r.designation}</CTableDataCell>
-                      <CTableDataCell>
-                        <CBadge color={statusColor(r.status)}>{r.status}</CBadge>
-                      </CTableDataCell>
-                      <CTableDataCell className="d-none d-xl-table-cell">{r.joiningDate}</CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CDropdown variant="btn-group" alignment="end">
-                          <CDropdownToggle color="light" size="sm" caret={false}>
-                            <CIcon icon={cilOptions} />
-                          </CDropdownToggle>
-                          <CDropdownMenu>
-                            <CDropdownItem as={Link} to={`/admin/employees/${r.id}/edit`}>
-                              <CIcon icon={cilPencil} className="me-2" />Edit
-                            </CDropdownItem>
-                            <CDropdownItem className="text-danger" onClick={() => setDeleteTarget(r)}>
-                              <CIcon icon={cilTrash} className="me-2" />Delete
-                            </CDropdownItem>
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
-
-              {/* ——— Pagination ——— */}
-              <div className="d-flex justify-content-end mt-3">
-                <CPagination aria-label="Employee pagination" size="sm">
-                  <CPaginationItem disabled={safePage <= 1} onClick={() => go(1)}>First</CPaginationItem>
-                  <CPaginationItem disabled={safePage <= 1} onClick={() => go(safePage - 1)}>‹</CPaginationItem>
-                  {pageNumbers.map((p) => (
-                    <CPaginationItem key={p} active={p === safePage} onClick={() => go(p)}>{p}</CPaginationItem>
-                  ))}
-                  <CPaginationItem disabled={safePage >= pageCount} onClick={() => go(safePage + 1)}>›</CPaginationItem>
-                  <CPaginationItem disabled={safePage >= pageCount} onClick={() => go(pageCount)}>Last</CPaginationItem>
-                </CPagination>
+        {/* Filters toolbar */}
+        <div className="card-body border-bottom py-3">
+          <div className="row g-2 align-items-end">
+            <div className="col-sm-4 col-lg-3">
+              <div className="input-group input-group-sm">
+                <span className="input-group-text"><IconSearch size={16} /></span>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search name, email, ID\u2026"
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                />
               </div>
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+            </div>
+            <div className="col-sm-3 col-lg-2">
+              <div className="input-group input-group-sm">
+                <span className="input-group-text"><IconFilter size={16} /></span>
+                <select
+                  className="form-select"
+                  value={deptFilter}
+                  onChange={(e) => { setDeptFilter(e.target.value); setPage(1); }}
+                >
+                  <option value="">All Depts</option>
+                  {departments.map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="col-sm-2 col-lg-2">
+              <select
+                className="form-select form-select-sm"
+                value={statusFilter}
+                onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+              >
+                <option value="">All Status</option>
+                <option>Active</option>
+                <option>On Leave</option>
+                <option>Resigned</option>
+              </select>
+            </div>
+            <div className="col-sm-auto">
+              <div className="d-flex align-items-center gap-2">
+                <small className="text-muted text-nowrap">Rows</small>
+                <select
+                  className="form-select form-select-sm"
+                  style={{ width: 68 }}
+                  value={pageSize}
+                  onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+                >
+                  {PAGE_SIZES.map((n) => <option key={n} value={n}>{n}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="col text-end">
+              <small className="text-muted">{from}\u2013{to} of {total}</small>
+            </div>
+          </div>
+        </div>
 
-      {/* ——— Delete confirmation modal ——— */}
-      <CModal visible={!!deleteTarget} onClose={() => setDeleteTarget(null)} alignment="center">
-        <CModalHeader closeButton>
-          <CModalTitle>Confirm Delete</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          Are you sure you want to delete <strong>{deleteTarget?.firstName} {deleteTarget?.lastName}</strong> ({deleteTarget?.id})?
-          This action cannot be undone.
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" variant="outline" onClick={() => setDeleteTarget(null)}>Cancel</CButton>
-          <CButton color="danger" onClick={confirmDelete}>Delete</CButton>
-        </CModalFooter>
-      </CModal>
+        {/* Table */}
+        <div className="table-responsive">
+          <table className="table table-vcenter card-table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th className="d-none d-md-table-cell">Email</th>
+                <th className="d-none d-lg-table-cell">Department</th>
+                <th className="d-none d-lg-table-cell">Designation</th>
+                <th>Status</th>
+                <th className="d-none d-xl-table-cell">Joining</th>
+                <th className="text-center" style={{ width: 80 }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="text-center text-muted py-4">No employees found.</td>
+                </tr>
+              )}
+              {rows.map((r) => (
+                <tr key={r.id}>
+                  <td className="font-monospace">{r.id}</td>
+                  <td className="fw-semibold">{r.firstName} {r.lastName}</td>
+                  <td className="d-none d-md-table-cell">{r.email}</td>
+                  <td className="d-none d-lg-table-cell">{r.department}</td>
+                  <td className="d-none d-lg-table-cell">{r.designation}</td>
+                  <td><span className={`badge ${statusBadge(r.status)}`}>{r.status}</span></td>
+                  <td className="d-none d-xl-table-cell">{r.joiningDate}</td>
+                  <td className="text-center">
+                    <div className={`dropdown${openActions === r.id ? ' show' : ''}`}>
+                      <button
+                        className="btn btn-ghost-secondary btn-sm btn-icon"
+                        onClick={() => setOpenActions(openActions === r.id ? null : r.id)}
+                      >
+                        <IconDotsVertical size={16} />
+                      </button>
+                      <div className={`dropdown-menu dropdown-menu-end${openActions === r.id ? ' show' : ''}`}>
+                        <Link to={`/admin/employees/${r.id}/edit`} className="dropdown-item" onClick={() => setOpenActions(null)}>
+                          <IconPencil size={16} className="me-2" />Edit
+                        </Link>
+                        <button
+                          className="dropdown-item text-danger"
+                          onClick={() => { setDeleteTarget(r); setOpenActions(null); }}
+                        >
+                          <IconTrash size={16} className="me-2" />Delete
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="card-footer d-flex align-items-center justify-content-end">
+          <ul className="pagination pagination-sm m-0">
+            <li className={`page-item${safePage <= 1 ? ' disabled' : ''}`}>
+              <button className="page-link" onClick={() => go(1)}>First</button>
+            </li>
+            <li className={`page-item${safePage <= 1 ? ' disabled' : ''}`}>
+              <button className="page-link" onClick={() => go(safePage - 1)}>&lsaquo;</button>
+            </li>
+            {pageNumbers.map((p) => (
+              <li key={p} className={`page-item${p === safePage ? ' active' : ''}`}>
+                <button className="page-link" onClick={() => go(p)}>{p}</button>
+              </li>
+            ))}
+            <li className={`page-item${safePage >= pageCount ? ' disabled' : ''}`}>
+              <button className="page-link" onClick={() => go(safePage + 1)}>&rsaquo;</button>
+            </li>
+            <li className={`page-item${safePage >= pageCount ? ' disabled' : ''}`}>
+              <button className="page-link" onClick={() => go(pageCount)}>Last</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Delete confirmation modal */}
+      {deleteTarget && (
+        <div className="modal modal-blur show d-block" tabIndex={-1} role="dialog" style={{ backgroundColor: 'rgba(0,0,0,.5)' }}>
+          <div className="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Delete</h5>
+                <button type="button" className="btn-close" onClick={() => setDeleteTarget(null)} aria-label="Close" />
+              </div>
+              <div className="modal-body">
+                Are you sure you want to delete <strong>{deleteTarget.firstName} {deleteTarget.lastName}</strong> ({deleteTarget.id})?
+                This action cannot be undone.
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-outline-secondary" onClick={() => setDeleteTarget(null)}>Cancel</button>
+                <button className="btn btn-danger" onClick={confirmDelete}>Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

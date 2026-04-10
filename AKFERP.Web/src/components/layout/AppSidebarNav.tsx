@@ -1,61 +1,65 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { CBadge, CNavLink, CSidebarNav } from '@coreui/react';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
-import type { ReactNode } from 'react';
+import { IconChevronDown } from '@tabler/icons-react';
+import type { NavItemDef } from '@/_nav';
 
-type NavBadge = { color: string; text: string };
-type NavItemDef = {
-  component: React.ElementType;
-  name: string | ReactNode;
-  to?: string;
-  href?: string;
-  icon?: ReactNode;
-  badge?: NavBadge;
-  items?: NavItemDef[];
-  [key: string]: unknown;
-};
+function NavItem({ item }: { item: NavItemDef }) {
+  if (item.isTitle) {
+    return <li className="nav-item nav-item-header pt-3 pb-1 px-3 text-uppercase text-xs text-muted">{item.label}</li>;
+  }
 
-function renderLink(name: string | ReactNode, icon?: ReactNode, badge?: NavBadge, indent = false) {
-  return (
-    <>
-      {icon || (indent && <span className="nav-icon"><span className="nav-icon-bullet" /></span>)}
-      {name && name}
-      {badge && <CBadge color={badge.color} className="ms-auto">{badge.text}</CBadge>}
-    </>
-  );
+  if (item.to) {
+    return (
+      <li className="nav-item">
+        <NavLink to={item.to} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+          <span className="nav-link-icon d-md-none d-lg-inline-block">{item.icon}</span>
+          <span className="nav-link-title">{item.label}</span>
+        </NavLink>
+      </li>
+    );
+  }
+
+  return null;
 }
 
-function renderItem(item: NavItemDef, index: number, indent = false) {
-  const { component: Component, name, badge, icon, ...rest } = item;
-  return (
-    <Component key={index} {...rest}>
-      {rest.to || rest.href ? (
-        <CNavLink as={NavLink} {...(rest.to ? { to: rest.to } : { href: rest.href })}>
-          {renderLink(name, icon, badge, indent)}
-        </CNavLink>
-      ) : (
-        renderLink(name, icon, badge, indent)
-      )}
-    </Component>
-  );
-}
+function NavGroup({ item }: { item: NavItemDef }) {
+  const [open, setOpen] = useState(false);
 
-function renderGroup(item: NavItemDef, index: number) {
-  const { component: Component, name, icon, items, ...rest } = item;
   return (
-    <Component key={index} toggler={renderLink(name, icon)} {...rest}>
-      {items?.map((child, i) =>
-        child.items ? renderGroup(child, i) : renderItem(child, i, true),
-      )}
-    </Component>
+    <li className={`nav-item dropdown${open ? ' show' : ''}`}>
+      <a
+        className={`nav-link dropdown-toggle${open ? '' : ' collapsed'}`}
+        href="#"
+        onClick={(e) => { e.preventDefault(); setOpen((p) => !p); }}
+        aria-expanded={open}
+      >
+        <span className="nav-link-icon d-md-none d-lg-inline-block">{item.icon}</span>
+        <span className="nav-link-title">{item.label}</span>
+        <IconChevronDown size={16} className="nav-link-toggle-icon ms-auto" />
+      </a>
+      <div className={`dropdown-menu${open ? ' show' : ''}`}>
+        <div className="dropdown-menu-columns">
+          <div className="dropdown-menu-column">
+            {item.children?.map((child, i) => (
+              child.to ? (
+                <NavLink key={i} to={child.to} className={({ isActive }) => `dropdown-item${isActive ? ' active' : ''}`}>
+                  {child.label}
+                </NavLink>
+              ) : null
+            ))}
+          </div>
+        </div>
+      </div>
+    </li>
   );
 }
 
 export function AppSidebarNav({ items }: { items: NavItemDef[] }) {
   return (
-    <CSidebarNav as={SimpleBar}>
-      {items.map((item, i) => (item.items ? renderGroup(item, i) : renderItem(item, i)))}
-    </CSidebarNav>
+    <ul className="navbar-nav pt-lg-3">
+      {items.map((item, i) =>
+        item.children ? <NavGroup key={i} item={item} /> : <NavItem key={i} item={item} />,
+      )}
+    </ul>
   );
 }

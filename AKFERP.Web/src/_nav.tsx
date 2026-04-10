@@ -1,38 +1,38 @@
-import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import {
-  cilSpeedometer,
-  cilUser,
-  cilPeople,
-} from '@coreui/icons';
+import { IconDashboard, IconUsers, IconUserPlus, IconUser, IconCategory } from '@tabler/icons-react';
+import type { ReactNode } from 'react';
 
-const _nav = [
+export type NavItemDef = {
+  label: string;
+  to?: string;
+  icon?: ReactNode;
+  children?: NavItemDef[];
+  isTitle?: boolean;
+};
+
+const _nav: NavItemDef[] = [
   {
-    component: CNavItem,
-    name: 'Dashboard',
+    label: 'Dashboard',
     to: '/admin/dashboard',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    icon: <IconDashboard size={20} />,
   },
   {
-    component: CNavTitle,
-    name: 'Management',
+    label: 'Management',
+    isTitle: true,
   },
   {
-    component: CNavGroup,
-    name: 'Employees',
-    icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
-    items: [
-      { component: CNavItem, name: 'All Employees', to: '/admin/employees' },
-      { component: CNavItem, name: 'Add Employee', to: '/admin/employees/new' },
+    label: 'Employees',
+    icon: <IconUsers size={20} />,
+    children: [
+      { label: 'All Employees', to: '/admin/employees' },
+      { label: 'Add Employee', to: '/admin/employees/new', icon: <IconUserPlus size={20} /> },
     ],
   },
   {
-    component: CNavGroup,
-    name: 'Users',
-    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
-    items: [
-      { component: CNavItem, name: 'All Users', to: '/admin/users' },
-      { component: CNavItem, name: 'Add User', to: '/admin/users/new' },
+    label: 'Users',
+    icon: <IconUser size={20} />,
+    children: [
+      { label: 'All Users', to: '/admin/users' },
+      { label: 'Add User', to: '/admin/users/new' },
     ],
   },
 ];

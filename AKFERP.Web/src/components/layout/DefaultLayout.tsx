@@ -3,26 +3,22 @@ import { Outlet } from 'react-router-dom';
 import { AppSidebar } from './AppSidebar';
 import { AppHeader } from './AppHeader';
 import { AppFooter } from './AppFooter';
-import { CContainer } from '@coreui/react';
 
 export function DefaultLayout() {
   const [sidebarShow, setSidebarShow] = useState(true);
-  const [sidebarUnfoldable, setSidebarUnfoldable] = useState(false);
 
   return (
-    <div>
+    <div className="page">
       <AppSidebar
         sidebarShow={sidebarShow}
-        sidebarUnfoldable={sidebarUnfoldable}
-        onVisibleChange={setSidebarShow}
-        onToggleUnfoldable={() => setSidebarUnfoldable((p) => !p)}
+        onToggleSidebar={() => setSidebarShow((p) => !p)}
       />
-      <div className="wrapper d-flex flex-column min-vh-100">
+      <div className="page-wrapper">
         <AppHeader onToggleSidebar={() => setSidebarShow((p) => !p)} />
-        <div className="body flex-grow-1">
-          <CContainer fluid className="px-4">
+        <div className="page-body">
+          <div className="container-xl">
             <Outlet />
-          </CContainer>
+          </div>
         </div>
         <AppFooter />
       </div>

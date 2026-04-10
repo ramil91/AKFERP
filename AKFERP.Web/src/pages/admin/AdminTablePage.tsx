@@ -1,28 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCol,
-  CRow,
-  CTable,
-  CTableHead,
-  CTableRow,
-  CTableHeaderCell,
-  CTableBody,
-  CTableDataCell,
-  CPagination,
-  CPaginationItem,
-  CFormSelect,
-  CBadge,
-  CButton,
-  CInputGroup,
-  CFormInput,
-  CInputGroupText,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilPlus, cilSearch } from '@coreui/icons';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
 
 type Row = { id: string; name: string; category: string; status: string; updated: string };
 
@@ -72,99 +50,91 @@ export function AdminTablePage() {
     setPage(Math.min(Math.max(1, p), pageCount));
   }
 
+  const pageNumbers = useMemo(() => {
+    const start = Math.max(1, Math.min(safePage - 2, pageCount - 4));
+    return Array.from({ length: Math.min(pageCount, 5) }, (_, i) => start + i).filter((n) => n <= pageCount);
+  }, [safePage, pageCount]);
+
   return (
-    <CRow>
-      <CCol>
-        <CCard>
-          <CCardHeader className="d-flex flex-wrap align-items-center justify-content-between gap-2">
-            <strong>Records</strong>
-            <CButton color="primary" size="sm" as={Link} to="/admin/records/new">
-              <CIcon icon={cilPlus} className="me-1" />
-              Add Record
-            </CButton>
-          </CCardHeader>
-          <CCardBody>
-            {/* Toolbar */}
-            <CRow className="mb-3 g-2 align-items-end">
-              <CCol sm={4} lg={3}>
-                <CInputGroup size="sm">
-                  <CInputGroupText><CIcon icon={cilSearch} /></CInputGroupText>
-                  <CFormInput
-                    placeholder="Search…"
-                    value={search}
-                    onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                  />
-                </CInputGroup>
-              </CCol>
-              <CCol sm="auto">
-                <div className="d-flex align-items-center gap-2">
-                  <small className="text-body-secondary text-nowrap">Rows per page</small>
-                  <CFormSelect
-                    size="sm"
-                    style={{ width: 70 }}
-                    value={pageSize}
-                    onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
-                  >
-                    {PAGE_SIZES.map((n) => <option key={n} value={n}>{n}</option>)}
-                  </CFormSelect>
-                </div>
-              </CCol>
-              <CCol className="text-end">
-                <small className="text-body-secondary">
-                  Showing {from}–{to} of {total}
-                </small>
-              </CCol>
-            </CRow>
-
-            {/* Table */}
-            <CTable align="middle" hover responsive bordered className="mb-0">
-              <CTableHead color="light">
-                <CTableRow>
-                  <CTableHeaderCell scope="col">ID</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Name</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Category</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Status</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Updated</CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
-              <CTableBody>
-                {rows.map((r) => (
-                  <CTableRow key={r.id}>
-                    <CTableDataCell className="font-monospace">{r.id}</CTableDataCell>
-                    <CTableDataCell>{r.name}</CTableDataCell>
-                    <CTableDataCell>{r.category}</CTableDataCell>
-                    <CTableDataCell>
-                      <CBadge color={r.status === 'Active' ? 'success' : 'secondary'}>
-                        {r.status}
-                      </CBadge>
-                    </CTableDataCell>
-                    <CTableDataCell>{r.updated}</CTableDataCell>
-                  </CTableRow>
-                ))}
-              </CTableBody>
-            </CTable>
-
-            {/* Pagination */}
-            <div className="d-flex justify-content-end mt-3">
-              <CPagination aria-label="Table pagination" size="sm">
-                <CPaginationItem disabled={safePage <= 1} onClick={() => go(1)}>First</CPaginationItem>
-                <CPaginationItem disabled={safePage <= 1} onClick={() => go(safePage - 1)}>‹</CPaginationItem>
-                {Array.from({ length: Math.min(pageCount, 5) }, (_, i) => {
-                  const start = Math.max(1, Math.min(safePage - 2, pageCount - 4));
-                  const p = start + i;
-                  return p <= pageCount ? (
-                    <CPaginationItem key={p} active={p === safePage} onClick={() => go(p)}>
-                      {p}
-                    </CPaginationItem>
-                  ) : null;
-                })}
-                <CPaginationItem disabled={safePage >= pageCount} onClick={() => go(safePage + 1)}>›</CPaginationItem>
-                <CPaginationItem disabled={safePage >= pageCount} onClick={() => go(pageCount)}>Last</CPaginationItem>
-              </CPagination>
-            </div>
-          </CCardBody>
-        </CCard>
-      </CCol>
-    </CRow>
+    <div className="card">
+      <div className="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h3 className="card-title">Records</h3>
+        <Link to="/admin/records/new" className="btn btn-primary btn-sm">
+          <IconPlus size={16} className="me-1" />
+          Add Record
+        </Link>
+      </div>
+      <div className="card-body border-bottom py-3">
+        <div className="d-flex flex-wrap gap-2 align-items-center">
+          <div className="input-group input-group-sm" style={{ maxWidth: 240 }}>
+            <span className="input-group-text"><IconSearch size={16} /></span>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search\u2026"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            />
+          </div>
+          <div className="d-flex align-items-center gap-2 ms-auto">
+            <small className="text-muted text-nowrap">Rows per page</small>
+            <select
+              className="form-select form-select-sm"
+              style={{ width: 70 }}
+              value={pageSize}
+              onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+            >
+              {PAGE_SIZES.map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+            <small className="text-muted">Showing {from}\u2013{to} of {total}</small>
+          </div>
+        </div>
+      </div>
+      <div className="table-responsive">
+        <table className="table table-vcenter card-table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id}>
+                <td className="font-monospace">{r.id}</td>
+                <td>{r.name}</td>
+                <td>{r.category}</td>
+                <td><span className={`badge ${r.status === 'Active' ? 'bg-success' : 'bg-secondary'}`}>{r.status}</span></td>
+                <td>{r.updated}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="card-footer d-flex align-items-center justify-content-end">
+        <ul className="pagination pagination-sm m-0">
+          <li className={`page-item${safePage <= 1 ? ' disabled' : ''}`}>
+            <button className="page-link" onClick={() => go(1)}>First</button>
+          </li>
+          <li className={`page-item${safePage <= 1 ? ' disabled' : ''}`}>
+            <button className="page-link" onClick={() => go(safePage - 1)}>&lsaquo;</button>
+          </li>
+          {pageNumbers.map((p) => (
+            <li key={p} className={`page-item${p === safePage ? ' active' : ''}`}>
+              <button className="page-link" onClick={() => go(p)}>{p}</button>
+            </li>
+          ))}
+          <li className={`page-item${safePage >= pageCount ? ' disabled' : ''}`}>
+            <button className="page-link" onClick={() => go(safePage + 1)}>&rsaquo;</button>
+          </li>
+          <li className={`page-item${safePage >= pageCount ? ' disabled' : ''}`}>
+            <button className="page-link" onClick={() => go(pageCount)}>Last</button>
+          </li>
+        </ul>
+      </div>
+    </div>
   );
 }

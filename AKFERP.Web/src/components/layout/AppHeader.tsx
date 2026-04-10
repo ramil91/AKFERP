@@ -1,20 +1,6 @@
-import { useRef, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
-import {
-  CContainer,
-  CDropdown,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
-  CHeader,
-  CHeaderNav,
-  CHeaderToggler,
-  CNavItem,
-  CNavLink,
-  CAvatar,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilMenu, cilSun, cilMoon, cilAccountLogout } from '@coreui/icons';
+import { useRef, useEffect, useState } from 'react';
+import { NavLink, Link } from 'react-router-dom';
+import { IconMenu2, IconSun, IconMoon, IconLogout } from '@tabler/icons-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { AppBreadcrumb } from './AppBreadcrumb';
@@ -24,9 +10,10 @@ type Props = {
 };
 
 export function AppHeader({ onToggleSidebar }: Props) {
-  const headerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const { session, isAuthenticated, logout } = useAuth();
   const { resolved, toggleLightDark } = useTheme();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () =>
@@ -45,56 +32,68 @@ export function AppHeader({ onToggleSidebar }: Props) {
   })();
 
   return (
-    <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
-      <CContainer className="border-bottom px-4" fluid>
-        <CHeaderToggler onClick={onToggleSidebar} style={{ marginInlineStart: '-14px' }}>
-          <CIcon icon={cilMenu} size="lg" />
-        </CHeaderToggler>
-        <CHeaderNav className="d-none d-md-flex">
-          <CNavItem>
-            <CNavLink as={NavLink} to="/admin/dashboard">Dashboard</CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink as={NavLink} to="/admin/records">Records</CNavLink>
-          </CNavItem>
-        </CHeaderNav>
+    <header className="navbar navbar-expand-md d-print-none" ref={headerRef}>
+      <div className="container-xl">
+        <button className="navbar-toggler" type="button" onClick={onToggleSidebar} aria-label="Toggle sidebar">
+          <IconMenu2 size={20} />
+        </button>
+        <div className="navbar-nav flex-row order-md-last">
+          <div className="nav-item me-2">
+            <button
+              className="nav-link px-0 btn border-0"
+              onClick={toggleLightDark}
+              title={`Theme: ${resolved}`}
+            >
+              {resolved === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
+            </button>
+          </div>
 
-        <CHeaderNav className="ms-auto">
-          <CNavItem>
-            <CNavLink as="button" className="btn border-0" onClick={toggleLightDark} title={`Theme: ${resolved}`}>
-              <CIcon icon={resolved === 'dark' ? cilSun : cilMoon} size="lg" />
-            </CNavLink>
-          </CNavItem>
-        </CHeaderNav>
-
-        <CHeaderNav>
-          <li className="nav-item py-1"><div className="vr h-100 mx-2 text-body text-opacity-75" /></li>
           {isAuthenticated ? (
-            <CDropdown variant="nav-item" placement="bottom-end">
-              <CDropdownToggle caret={false} className="py-0 pe-0">
-                <CAvatar color="primary" textColor="white" size="md">{initials}</CAvatar>
-              </CDropdownToggle>
-              <CDropdownMenu className="pt-0">
-                <CDropdownItem disabled className="fw-semibold text-truncate" style={{ maxWidth: 200 }}>
-                  {session?.user.email}
-                </CDropdownItem>
-                <CDropdownItem as="button" onClick={logout}>
-                  <CIcon icon={cilAccountLogout} className="me-2" />
+            <div className={`nav-item dropdown${userMenuOpen ? ' show' : ''}`}>
+              <a
+                href="#"
+                className="nav-link d-flex lh-1 text-reset p-0"
+                onClick={(e) => { e.preventDefault(); setUserMenuOpen((p) => !p); }}
+                aria-expanded={userMenuOpen}
+              >
+                <span className="avatar avatar-sm bg-primary text-white">{initials}</span>
+                <div className="d-none d-xl-block ps-2">
+                  <div className="small text-muted">{session?.user.email}</div>
+                </div>
+              </a>
+              <div className={`dropdown-menu dropdown-menu-end${userMenuOpen ? ' show' : ''}`}>
+                <button className="dropdown-item" onClick={logout}>
+                  <IconLogout size={16} className="me-2" />
                   Log out
-                </CDropdownItem>
-              </CDropdownMenu>
-            </CDropdown>
+                </button>
+              </div>
+            </div>
           ) : (
-            <CNavItem>
-              <CNavLink as={NavLink} to="/login">Log in</CNavLink>
-            </CNavItem>
+            <div className="nav-item">
+              <NavLink to="/login" className="nav-link">Log in</NavLink>
+            </div>
           )}
-        </CHeaderNav>
-      </CContainer>
-
-      <CContainer className="px-4" fluid>
-        <AppBreadcrumb />
-      </CContainer>
-    </CHeader>
+        </div>
+        <div className="collapse navbar-collapse">
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                Dashboard
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/admin/records" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                Records
+              </NavLink>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div className="container-xl">
+        <div className="page-pretitle mt-2">
+          <AppBreadcrumb />
+        </div>
+      </div>
+    </header>
   );
 }
