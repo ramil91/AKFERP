@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { IconChevronDown } from '@tabler/icons-react';
+import { NavLink, useLocation } from 'react-router-dom';
 import type { NavItemDef } from '@/_nav';
 
 function NavItem({ item }: { item: NavItemDef }) {
   if (item.isTitle) {
-    return <li className="nav-item nav-item-header pt-3 pb-1 px-3 text-uppercase text-xs text-muted">{item.label}</li>;
+    return <li className="nav-item pt-3 pb-1 px-3 text-uppercase text-xs text-muted fw-bold">{item.label}</li>;
   }
 
   if (item.to) {
@@ -23,7 +22,9 @@ function NavItem({ item }: { item: NavItemDef }) {
 }
 
 function NavGroup({ item }: { item: NavItemDef }) {
-  const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+  const isChildActive = item.children?.some((c) => c.to && pathname.startsWith(c.to)) ?? false;
+  const [open, setOpen] = useState(isChildActive);
 
   return (
     <li className={`nav-item dropdown${open ? ' show' : ''}`}>
@@ -31,11 +32,11 @@ function NavGroup({ item }: { item: NavItemDef }) {
         className={`nav-link dropdown-toggle${open ? '' : ' collapsed'}`}
         href="#"
         onClick={(e) => { e.preventDefault(); setOpen((p) => !p); }}
+        role="button"
         aria-expanded={open}
       >
         <span className="nav-link-icon d-md-none d-lg-inline-block">{item.icon}</span>
         <span className="nav-link-title">{item.label}</span>
-        <IconChevronDown size={16} className="nav-link-toggle-icon ms-auto" />
       </a>
       <div className={`dropdown-menu${open ? ' show' : ''}`}>
         <div className="dropdown-menu-columns">

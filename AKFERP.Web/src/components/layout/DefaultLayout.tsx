@@ -15,11 +15,7 @@ export function DefaultLayout() {
       />
       <div className="page-wrapper">
         <AppHeader onToggleSidebar={() => setSidebarShow((p) => !p)} />
-        <div className="page-body">
-          <div className="container-xl">
-            <Outlet />
-          </div>
-        </div>
+        <Outlet />
         <AppFooter />
       </div>
     </div>

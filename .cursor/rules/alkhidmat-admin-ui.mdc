@@ -43,14 +43,17 @@ Tabler uses Bootstrap 5.3's `data-bs-theme` attribute on `<html>`.
 
 ```
 div.page
-  aside.navbar.navbar-vertical.navbar-expand-lg.navbar-dark   ← AppSidebar
+  aside.navbar.navbar-vertical.navbar-expand-lg[data-bs-theme="dark"]   ← AppSidebar
   div.page-wrapper
-    header.navbar.navbar-expand-md                            ← AppHeader
+    div.page-header.d-print-none                                        ← AppHeader
     div.page-body > div.container-xl > <Outlet />
-    footer.footer.footer-transparent                          ← AppFooter
+    footer.footer.footer-transparent                                    ← AppFooter
 ```
 
 - **`DefaultLayout`**: `AppSidebar` + `.page-wrapper` with `AppHeader`, `.page-body`, `AppFooter`.
+- **`AppSidebar`**: Tabler vertical sidebar (`navbar-vertical navbar-expand-lg`). Uses `data-bs-theme="dark"` for dark sidebar (Bootstrap 5.3 attribute, NOT `navbar-dark` class). Brand in `<h1 class="navbar-brand navbar-brand-autodark">`. On mobile (<992px) overlays content with `.sidebar-overlay` backdrop, auto-closes on route change.
+- **`AppSidebarNav`**: Dropdowns in vertical sidebar expand inline (not popups). Groups auto-open if a child route is active. Tabler CSS adds the toggle chevron automatically via `.dropdown-toggle`.
+- **`AppHeader`**: Uses `div.page-header` (NOT a `<header>` navbar). Contains breadcrumb on the left, theme toggle + user dropdown on the right. Sidebar hamburger visible only on mobile (`d-lg-none`).
 - **Auth/error pages** (`/login`, `/signup`, `/404`): `div.page.page-center` with `container.container-tight`. Outside `DefaultLayout`.
 - Sidebar nav: `src/_nav.tsx` (array of `NavItemDef` objects with `label`, `to?`, `icon?`, `children?`, `isTitle?`).
 - Breadcrumbs: `AppBreadcrumb.tsx` → `routeNames` map + `EDIT_PATTERNS` for dynamic `:id` routes. Uses Bootstrap `ol.breadcrumb`.

@@ -1,4 +1,4 @@
-import { IconDashboard, IconUsers, IconUserPlus, IconUser, IconCategory } from '@tabler/icons-react';
+import { IconDashboard, IconUsers, IconUserPlus, IconUser, IconCategory, IconBriefcase, IconUserCheck } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 
 export type NavItemDef = {
@@ -33,6 +33,22 @@ const _nav: NavItemDef[] = [
     children: [
       { label: 'All Users', to: '/admin/users' },
       { label: 'Add User', to: '/admin/users/new' },
+    ],
+  },
+  {
+    label: 'Projects',
+    icon: <IconBriefcase size={20} />,
+    children: [
+      { label: 'All Projects', to: '/admin/projects' },
+      { label: 'Add Project', to: '/admin/projects/new' },
+    ],
+  },
+  {
+    label: 'Parties',
+    icon: <IconUserCheck size={20} />,
+    children: [
+      { label: 'All Parties', to: '/admin/parties' },
+      { label: 'Add Party', to: '/admin/parties/new' },
     ],
   },
 ];

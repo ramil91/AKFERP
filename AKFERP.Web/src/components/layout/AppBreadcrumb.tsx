@@ -12,6 +12,10 @@ const routeNames: Record<string, string> = {
   '/admin/employees/new': 'Add Employee',
   '/admin/users': 'Users',
   '/admin/users/new': 'Add User',
+  '/admin/projects': 'Projects',
+  '/admin/projects/new': 'Add Project',
+  '/admin/parties': 'Parties',
+  '/admin/parties/new': 'Add Party',
   '/admin/analytics': 'Analytics',
   '/admin/profile': 'Profile',
   '/admin/settings': 'Settings',
@@ -19,6 +23,9 @@ const routeNames: Record<string, string> = {
 
 const EDIT_PATTERNS = [
   { regex: /^\/admin\/employees\/[^/]+\/edit$/, name: 'Edit Employee', parent: '/admin/employees' },
+  { regex: /^\/admin\/users\/[^/]+\/edit$/, name: 'Edit User', parent: '/admin/users' },
+  { regex: /^\/admin\/projects\/[^/]+\/edit$/, name: 'Edit Project', parent: '/admin/projects' },
+  { regex: /^\/admin\/parties\/[^/]+\/edit$/, name: 'Edit Party', parent: '/admin/parties' },
 ];
 
 export function AppBreadcrumb() {

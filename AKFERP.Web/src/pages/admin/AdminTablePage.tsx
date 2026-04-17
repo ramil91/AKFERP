@@ -56,7 +56,9 @@ export function AdminTablePage() {
   }, [safePage, pageCount]);
 
   return (
-    <div className="card">
+    <div className="page-body">
+      <div className="container-xl">
+        <div className="card">
       <div className="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
         <h3 className="card-title">Records</h3>
         <Link to="/admin/records/new" className="btn btn-primary btn-sm">
@@ -134,6 +136,8 @@ export function AdminTablePage() {
             <button className="page-link" onClick={() => go(pageCount)}>Last</button>
           </li>
         </ul>
+      </div>
+        </div>
       </div>
     </div>
   );

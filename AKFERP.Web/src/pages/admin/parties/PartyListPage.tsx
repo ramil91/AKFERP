@@ -3,44 +3,30 @@ import { Link } from 'react-router-dom';
 import {
   IconPlus, IconSearch, IconDotsVertical,
   IconPencil, IconTrash, IconDownload,
+  IconUser, IconBuilding,
 } from '@tabler/icons-react';
-import { employeeStore, type Employee, DEPARTMENT_OPTIONS } from '@/data/employees';
+import {
+  partyStore, type Party,
+  PARTY_TYPE_OPTIONS, PARTY_CITY_OPTIONS,
+} from '@/data/parties';
 
 const PAGE_SIZES = [10, 20, 50, 100] as const;
 
-const statusClass = (s: string) => {
-  const map: Record<string, string> = {
-    Active: 'status-green', 'On Leave': 'status-yellow', Resigned: 'status-red',
-    Terminated: 'status-red', Retired: 'status-azure',
-  };
-  return map[s] ?? 'status-secondary';
-};
+const typeIcon = (t: string) =>
+  t === 'Organization' ? <IconBuilding size={16} /> : <IconUser size={16} />;
 
-const deptColor = (d: string) => {
-  const colors: Record<string, string> = {
-    Administration: 'bg-blue-lt', Programs: 'bg-green-lt', Finance: 'bg-yellow-lt',
-    HR: 'bg-pink-lt', IT: 'bg-cyan-lt', Operations: 'bg-orange-lt', 'Field Office': 'bg-purple-lt',
-    Medical: 'bg-red-lt', Education: 'bg-teal-lt', Logistics: 'bg-indigo-lt',
-  };
-  return colors[d] ?? 'bg-secondary-lt';
-};
+const typeBadge = (t: string) =>
+  t === 'Organization' ? 'bg-purple-lt' : 'bg-blue-lt';
 
-const empTypeLabel = (t: string) => {
-  const colors: Record<string, string> = {
-    'Full-Time': 'bg-green-lt', 'Part-Time': 'bg-cyan-lt', Contract: 'bg-yellow-lt',
-    Intern: 'bg-purple-lt', Probation: 'bg-orange-lt',
-  };
-  return colors[t] ?? 'bg-secondary-lt';
-};
-
-export function EmployeeListPage() {
-  const [data, setData] = useState(() => employeeStore.getAll());
+export function PartyListPage() {
+  const [data, setData] = useState(() => partyStore.getAll());
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(20);
   const [search, setSearch] = useState('');
-  const [deptFilter, setDeptFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [deleteTarget, setDeleteTarget] = useState<Employee | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Party | null>(null);
   const [openActions, setOpenActions] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
@@ -49,18 +35,18 @@ export function EmployeeListPage() {
       const q = search.toLowerCase();
       rows = rows.filter(
         (r) =>
-          r.firstName.toLowerCase().includes(q) ||
-          r.lastName.toLowerCase().includes(q) ||
-          r.personalEmail.toLowerCase().includes(q) ||
-          r.employeeCode.toLowerCase().includes(q) ||
-          r.cnic.toLowerCase().includes(q) ||
-          r.department.toLowerCase().includes(q),
+          r.displayName.toLowerCase().includes(q) ||
+          r.email.toLowerCase().includes(q) ||
+          r.phone.toLowerCase().includes(q) ||
+          String(r.partyNumber).includes(q),
       );
     }
-    if (deptFilter) rows = rows.filter((r) => r.department === deptFilter);
-    if (statusFilter) rows = rows.filter((r) => r.status === statusFilter);
+    if (typeFilter) rows = rows.filter((r) => r.partyType === typeFilter);
+    if (cityFilter) rows = rows.filter((r) => r.city === cityFilter);
+    if (statusFilter === 'Active') rows = rows.filter((r) => r.isActive);
+    else if (statusFilter === 'Inactive') rows = rows.filter((r) => !r.isActive);
     return rows;
-  }, [data, search, deptFilter, statusFilter]);
+  }, [data, search, typeFilter, cityFilter, statusFilter]);
 
   const total = filtered.length;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
@@ -77,8 +63,8 @@ export function EmployeeListPage() {
 
   const confirmDelete = useCallback(() => {
     if (!deleteTarget) return;
-    employeeStore.remove(deleteTarget.id);
-    setData(employeeStore.getAll());
+    partyStore.remove(deleteTarget.id);
+    setData(partyStore.getAll());
     setDeleteTarget(null);
   }, [deleteTarget]);
 
@@ -94,15 +80,15 @@ export function EmployeeListPage() {
           <div className="row g-2 align-items-center">
             <div className="col">
               <div className="page-pretitle">Management</div>
-              <h2 className="page-title">Employees</h2>
+              <h2 className="page-title">Parties</h2>
             </div>
             <div className="col-auto ms-auto d-print-none">
               <div className="d-flex gap-2">
                 <button className="btn btn-outline-secondary d-none d-sm-inline-block" title="Export CSV">
                   <IconDownload size={16} className="me-1" />Export
                 </button>
-                <Link to="/admin/employees/new" className="btn btn-primary">
-                  <IconPlus size={16} className="me-1" />Add Employee
+                <Link to="/admin/parties/new" className="btn btn-primary">
+                  <IconPlus size={16} className="me-1" />Add Party
                 </Link>
               </div>
             </div>
@@ -120,24 +106,25 @@ export function EmployeeListPage() {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Search name, code, CNIC, email…"
+                    placeholder="Search name, email, phone, number…"
                     value={search}
                     onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                   />
                 </div>
-                <select className="form-select form-select-sm" style={{ width: 150 }} value={deptFilter} onChange={(e) => { setDeptFilter(e.target.value); setPage(1); }}>
-                  <option value="">All Departments</option>
-                  {DEPARTMENT_OPTIONS.map((d) => <option key={d} value={d}>{d}</option>)}
+                <select className="form-select form-select-sm" style={{ width: 150 }} value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}>
+                  <option value="">All Types</option>
+                  {PARTY_TYPE_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+                </select>
+                <select className="form-select form-select-sm" style={{ width: 150 }} value={cityFilter} onChange={(e) => { setCityFilter(e.target.value); setPage(1); }}>
+                  <option value="">All Cities</option>
+                  {PARTY_CITY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <select className="form-select form-select-sm" style={{ width: 130 }} value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}>
                   <option value="">All Status</option>
                   <option>Active</option>
-                  <option>On Leave</option>
-                  <option>Resigned</option>
-                  <option>Terminated</option>
-                  <option>Retired</option>
+                  <option>Inactive</option>
                 </select>
-                <div className="ms-auto text-muted small">{from}–{to} of {total} employees</div>
+                <div className="ms-auto text-muted small">{from}–{to} of {total} parties</div>
               </div>
             </div>
 
@@ -145,12 +132,12 @@ export function EmployeeListPage() {
               <table className="table table-vcenter card-table">
                 <thead>
                   <tr>
-                    <th style={{ width: 100 }}>Code</th>
+                    <th style={{ width: 90 }}>#</th>
                     <th>Name</th>
-                    <th className="d-none d-lg-table-cell">Department</th>
                     <th className="d-none d-md-table-cell">Type</th>
+                    <th className="d-none d-lg-table-cell">City</th>
+                    <th className="d-none d-xl-table-cell">Email</th>
                     <th>Status</th>
-                    <th className="d-none d-xl-table-cell">Hire Date</th>
                     <th className="w-1"></th>
                   </tr>
                 </thead>
@@ -159,7 +146,7 @@ export function EmployeeListPage() {
                     <tr>
                       <td colSpan={7}>
                         <div className="empty">
-                          <p className="empty-title">No employees found</p>
+                          <p className="empty-title">No parties found</p>
                           <p className="empty-subtitle text-muted">Try adjusting your search or filters.</p>
                         </div>
                       </td>
@@ -167,38 +154,36 @@ export function EmployeeListPage() {
                   )}
                   {rows.map((r) => (
                     <tr key={r.id}>
-                      <td><span className="text-muted font-monospace">{r.employeeCode}</span></td>
+                      <td><span className="text-muted font-monospace">{r.partyNumber}</span></td>
                       <td>
                         <div className="d-flex align-items-center py-1">
-                          <span className="avatar avatar-sm bg-primary-lt me-2">
-                            {r.firstName[0]}{r.lastName[0]}
+                          <span className="avatar avatar-sm bg-info-lt me-2">
+                            {typeIcon(r.partyType)}
                           </span>
                           <div className="flex-fill">
-                            <div className="font-weight-medium">{r.firstName} {r.lastName}</div>
-                            <div className="text-muted small">{r.designation || r.personalEmail}</div>
+                            <div className="font-weight-medium">{r.displayName}</div>
+                            <div className="text-muted small">{r.phone || '—'}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="d-none d-lg-table-cell">
-                        <span className={`badge ${deptColor(r.department)}`}>{r.department}</span>
-                      </td>
                       <td className="d-none d-md-table-cell">
-                        {r.employmentType && <span className={`badge ${empTypeLabel(r.employmentType)}`}>{r.employmentType}</span>}
+                        <span className={`badge ${typeBadge(r.partyType)}`}>{r.partyType}</span>
                       </td>
+                      <td className="d-none d-lg-table-cell text-muted">{r.city || '—'}</td>
+                      <td className="d-none d-xl-table-cell text-muted">{r.email || '—'}</td>
                       <td>
-                        <span className={`status ${statusClass(r.status)}`}>
+                        <span className={`status ${r.isActive ? 'status-green' : 'status-red'}`}>
                           <span className="status-dot"></span>
-                          {r.status}
+                          {r.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="d-none d-xl-table-cell text-muted">{r.hireDate}</td>
                       <td>
                         <div className={`dropdown${openActions === r.id ? ' show' : ''}`}>
                           <button className="btn btn-ghost-secondary btn-sm btn-icon" onClick={() => setOpenActions(openActions === r.id ? null : r.id)}>
                             <IconDotsVertical size={16} />
                           </button>
                           <div className={`dropdown-menu dropdown-menu-end${openActions === r.id ? ' show' : ''}`}>
-                            <Link to={`/admin/employees/${r.id}/edit`} className="dropdown-item" onClick={() => setOpenActions(null)}>
+                            <Link to={`/admin/parties/${r.id}/edit`} className="dropdown-item" onClick={() => setOpenActions(null)}>
                               <IconPencil size={16} className="me-2" />Edit
                             </Link>
                             <button className="dropdown-item text-danger" onClick={() => { setDeleteTarget(r); setOpenActions(null); }}>
@@ -241,7 +226,7 @@ export function EmployeeListPage() {
                 <IconTrash size={40} className="text-danger mb-2" />
                 <h3>Are you sure?</h3>
                 <div className="text-muted">
-                  Do you really want to delete <strong>{deleteTarget.firstName} {deleteTarget.lastName}</strong> ({deleteTarget.employeeCode})?
+                  Do you really want to delete <strong>{deleteTarget.displayName}</strong> (PTY-{deleteTarget.partyNumber})?
                   This action cannot be undone.
                 </div>
               </div>

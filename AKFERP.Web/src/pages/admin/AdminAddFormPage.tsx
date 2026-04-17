@@ -21,7 +21,9 @@ export function AdminAddFormPage() {
   }
 
   return (
-    <div className="card">
+    <div className="page-body">
+      <div className="container-xl">
+        <div className="card">
       <div className="card-header d-flex justify-content-between align-items-center">
         <h3 className="card-title">Add Record</h3>
         <Link to="/admin/records" className="btn btn-ghost-secondary btn-sm">
@@ -88,6 +90,8 @@ export function AdminAddFormPage() {
             </button>
           </div>
         </form>
+      </div>
+        </div>
       </div>
     </div>
   );

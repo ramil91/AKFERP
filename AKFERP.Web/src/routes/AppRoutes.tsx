@@ -7,6 +7,15 @@ import { AdminTablePage } from '@/pages/admin/AdminTablePage';
 import { EmployeeListPage } from '@/pages/admin/employees/EmployeeListPage';
 import { AddEmployeePage } from '@/pages/admin/employees/AddEmployeePage';
 import { EditEmployeePage } from '@/pages/admin/employees/EditEmployeePage';
+import { UserListPage } from '@/pages/admin/users/UserListPage';
+import { AddUserPage } from '@/pages/admin/users/AddUserPage';
+import { EditUserPage } from '@/pages/admin/users/EditUserPage';
+import { ProjectListPage } from '@/pages/admin/projects/ProjectListPage';
+import { AddProjectPage } from '@/pages/admin/projects/AddProjectPage';
+import { EditProjectPage } from '@/pages/admin/projects/EditProjectPage';
+import { PartyListPage } from '@/pages/admin/parties/PartyListPage';
+import { AddPartyPage } from '@/pages/admin/parties/AddPartyPage';
+import { EditPartyPage } from '@/pages/admin/parties/EditPartyPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { HomePage } from '@/pages/HomePage';
 import { LoginPage } from '@/pages/LoginPage';
@@ -21,7 +30,7 @@ export function AppRoutes() {
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/404" element={<NotFoundPage />} />
 
-      {/* CoreUI DefaultLayout shell (sidebar + header + footer) */}
+      {/* DefaultLayout shell (sidebar + header + footer) */}
       <Route element={<DefaultLayout />}>
         <Route path="/" element={<HomePage />} />
 
@@ -35,9 +44,15 @@ export function AppRoutes() {
             <Route path="employees" element={<EmployeeListPage />} />
             <Route path="employees/new" element={<AddEmployeePage />} />
             <Route path="employees/:id/edit" element={<EditEmployeePage />} />
-            {/* Placeholder routes for nav items — replace with real pages */}
-            <Route path="users" element={<AdminTablePage />} />
-            <Route path="users/new" element={<AdminAddFormPage />} />
+            <Route path="users" element={<UserListPage />} />
+            <Route path="users/new" element={<AddUserPage />} />
+            <Route path="users/:id/edit" element={<EditUserPage />} />
+            <Route path="projects" element={<ProjectListPage />} />
+            <Route path="projects/new" element={<AddProjectPage />} />
+            <Route path="projects/:id/edit" element={<EditProjectPage />} />
+            <Route path="parties" element={<PartyListPage />} />
+            <Route path="parties/new" element={<AddPartyPage />} />
+            <Route path="parties/:id/edit" element={<EditPartyPage />} />
             <Route path="analytics" element={<AdminDashboardPage />} />
             <Route path="profile" element={<AdminAddFormPage />} />
             <Route path="settings" element={<AdminAddFormPage />} />
